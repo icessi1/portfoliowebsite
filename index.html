@@ -978,6 +978,12 @@
             cursor: grab;
             margin: 0 auto;
             z-index: 10;
+            touch-action: pan-y;
+            /* Dikey scroll'a izin ver, yatay touch'ı kontrol et */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         .carousel-container:active {
@@ -1222,6 +1228,17 @@
             transform: rotateY(180deg);
         }
 
+        /* Mobilde card flip için ek stiller */
+        @media (max-width: 768px) {
+            .card-flipped .card-inner {
+                transform: rotateY(180deg) !important;
+            }
+
+            .card {
+                cursor: pointer;
+            }
+        }
+
         /* Kart pozisyonları - Optimized */
         .card:nth-child(1) {
             transform: rotateY(0deg) translateZ(320px);
@@ -1374,6 +1391,7 @@
             background-color: var(--accent) !important;
             transition: background-color 0.3s ease;
         }
+
         .navigation-menu .active-element>svg,
         .navigation-menu .active-element .strike {
             position: absolute;
@@ -2050,36 +2068,32 @@
                 grid-template-columns: 1fr;
             }
 
-            .dual-form-container {
-                width: 100%;
-                min-height: 600px;
-            }
-
-            .contact-form-container,
-            .meeting-form-container {
-                width: 100%;
-                position: relative;
-                transform: none;
-                opacity: 1;
-                z-index: 1;
-            }
-
-            .dual-form-container.right-panel-active .contact-form-container {
-                transform: none;
-            }
-
-            .dual-form-container.right-panel-active .meeting-form-container {
-                transform: none;
-            }
-
-            .overlay-container {
-                display: none;
-            }
+            /* Dual form 1024px'de normal kalacak */
         }
 
         @media (max-width: 768px) {
-            .nav-links {
-                display: none;
+
+            /* Ana navbar'ı tamamen gizle */
+            nav {
+                display: none !important;
+            }
+
+            /* Logo'yu da mobilde gizle */
+            .logo {
+                display: none !important;
+            }
+
+            /* Mobilde cursor'u kaldır */
+            .cursor,
+            .cursor-follower {
+                display: none !important;
+            }
+
+            /* Mobilde normal cursor kullan */
+            body,
+            a,
+            button {
+                cursor: auto !important;
             }
 
             .hero h1 {
@@ -2110,6 +2124,206 @@
 
             .form {
                 padding: 0 30px;
+            }
+
+            /* Carousel mobil uyumlu boyutlar */
+            .carousel-container {
+                width: 300px;
+                height: 380px;
+                transform: scale(0.8);
+                touch-action: pan-y;
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+
+            .card {
+                width: 180px;
+                height: 240px;
+                margin-left: -90px;
+                margin-top: -150px;
+                will-change: transform;
+            }
+
+            .card-content-wrapper {
+                padding: 0.3rem;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                overflow: hidden;
+            }
+
+            .card-header {
+                flex-shrink: 0;
+                margin-bottom: 0.2rem;
+            }
+
+            .card-title {
+                font-size: 0.8rem;
+                line-height: 1;
+                margin-bottom: 0.1rem;
+                font-weight: 600;
+            }
+
+            .card-subtitle {
+                font-size: 0.55rem;
+                margin-bottom: 0;
+                line-height: 1;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .card-main {
+                flex: 1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 50px;
+                max-height: 80px;
+            }
+
+            .card-image {
+                width: 45px;
+                height: 45px;
+                font-size: 22px;
+            }
+
+            .card-footer {
+                font-size: 0.5rem;
+                padding: 0.1rem;
+                max-height: 40px;
+                line-height: 1.1;
+                flex-shrink: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 3;
+                line-clamp: 3;
+            }
+
+            .navigation {
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
+                opacity: 1;
+                pointer-events: auto;
+                z-index: 1001;
+                background: rgba(255, 255, 255, 0.3);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.4);
+            }
+
+            .navigation:hover {
+                background: rgba(255, 255, 255, 0.4);
+                transform: translateY(-50%) scale(1.05);
+            }
+
+            .nav-prev {
+                left: -45px;
+            }
+
+            .nav-next {
+                right: -45px;
+            }
+
+            /* Glass efektleri mobil optimizasyonu */
+            .glass {
+                padding: 0.8rem;
+                border-radius: 1.5rem;
+            }
+
+            .inner-glass {
+                padding: 0.3rem;
+                border-radius: 0.8rem;
+                margin-bottom: 0.3rem;
+            }
+
+            .inner-glass:last-child {
+                margin-bottom: 0;
+            }
+
+            /* Controls mobil konumlandırma */
+            .controls {
+                bottom: 0px;
+                padding: 8px 15px;
+                gap: 10px;
+            }
+
+            .control-btn {
+                width: 12px;
+                height: 12px;
+                cursor: pointer;
+                pointer-events: auto;
+                opacity: 0.8;
+                transition: all 0.3s ease;
+            }
+
+            .control-btn:hover {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+
+            .control-btn.active {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+
+            /* About text mobil düzenleme */
+            .about-text h3 {
+                font-size: 1.85rem !important;
+                margin-bottom: 1rem;
+                line-height: 1.3;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                hyphens: auto;
+                white-space: normal;
+            }
+
+            .about-text p {
+                font-size: 1.45rem !important;
+                line-height: 1.6;
+                margin-bottom: 1rem;
+            }
+
+            /* Card back mobil düzenleme */
+            .card-back-content {
+                padding: 0.8rem;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .card-back p {
+                font-size: 0.75rem;
+                line-height: 1.4;
+                text-align: center;
+                margin: 0;
+                padding: 0.5rem;
+            }
+
+            .card-back .inner-glass {
+                padding: 0.5rem;
+                border-radius: 0.8rem;
+                margin-bottom: 0;
+            }
+
+            /* Dual form mobilde daha geniş */
+            .dual-form-container {
+                width: 100%;
+                min-height: 500px;
+                transform: scale(1);
+                margin: 15px 0;
+            }
+
+            /* Contact section container padding */
+            .contact .container {
+                padding: 0 1rem;
             }
         }
 
@@ -2153,7 +2367,7 @@
             -webkit-backdrop-filter: blur(12px);
             border-radius: 30px;
             padding: 12px;
-            box-shadow: 
+            box-shadow:
                 inset 0 2px 4px rgba(0, 255, 0, 0.1),
                 0 8px 32px rgba(0, 255, 0, 0.05);
             border: 1px solid rgba(0, 255, 0, 0.2);
@@ -2165,7 +2379,7 @@
 
         .mobile-nav-container:hover {
             filter: brightness(1.45) contrast(1.1);
-            box-shadow: 
+            box-shadow:
                 inset 0 4px 8px rgba(0, 255, 0, 0.2),
                 0 8px 32px rgba(0, 255, 0, 0.1);
         }
@@ -2179,7 +2393,7 @@
             background: rgba(255, 255, 255, 0.15);
             border-radius: 36px;
             transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-            box-shadow: 
+            box-shadow:
                 0 8px 32px rgba(0, 255, 0, 0.3),
                 0 4px 16px rgba(0, 255, 0, 0.2),
                 inset 0 1px 0 rgba(255, 255, 255, 0.4),
@@ -2217,13 +2431,15 @@
         }
 
         @keyframes bubbleMorph {
-            0% { 
+            0% {
                 transform: translate(-50%, -50%) scale(1);
             }
-            50% { 
+
+            50% {
                 transform: translate(-50%, -50%) scale(1.05);
             }
-            100% { 
+
+            100% {
                 transform: translate(-50%, -50%) scale(1);
             }
         }
@@ -2330,7 +2546,7 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(0, 123, 255, 0.1);
-            box-shadow: 
+            box-shadow:
                 inset 0 2px 4px rgba(0, 123, 255, 0.05),
                 0 8px 32px rgba(0, 123, 255, 0.02);
             filter: brightness(1.2);
@@ -2338,7 +2554,7 @@
 
         :root.light-theme .mobile-nav-bubble {
             background: rgba(0, 123, 255, 0.2);
-            box-shadow: 
+            box-shadow:
                 0 8px 32px rgba(0, 123, 255, 0.4),
                 0 4px 16px rgba(0, 123, 255, 0.2),
                 inset 0 1px 0 rgba(255, 255, 255, 0.6),
@@ -2399,13 +2615,18 @@
             .mobile-bottom-nav {
                 display: block;
             }
-            
+
+            /* Ensure mobile nav is always visible on mobile */
+            .mobile-bottom-nav.visible {
+                transform: translateY(0) !important;
+            }
+
             /* Add padding to body to prevent content from being hidden behind mobile nav */
             body {
-                padding-bottom: 100px;
+                padding-bottom: 120px;
             }
-            
-            /* Hide desktop nav items if any */
+
+            /* Hide desktop nav items - already handled above but keeping for safety */
             .nav-links {
                 display: none;
             }
@@ -2414,27 +2635,266 @@
         /* Additional mobile optimizations */
         @media (max-width: 480px) {
             .mobile-nav-container {
-                margin: 0 10px;
+                margin: 0 5px;
+                padding: 8px;
             }
-            
+
             .mobile-nav-item {
-                width: 50px;
-                height: 50px;
+                width: 45px;
+                height: 45px;
             }
-            
+
             .mobile-nav-bubble {
-                width: 50px;
-                height: 50px;
+                width: 45px;
+                height: 45px;
             }
-            
+
             .mobile-nav-item i {
-                font-size: 18px;
+                font-size: 16px;
+                margin-bottom: 2px;
             }
-            
+
             .mobile-nav-item span {
-                font-size: 9px;
+                font-size: 8px;
+            }
+
+            /* Adjust body padding for smaller screens */
+            body {
+                padding-bottom: 100px;
+            }
+
+            /* Daha küçük mobil cihazlar için carousel */
+            .carousel-container {
+                width: 280px;
+                height: 350px;
+                transform: scale(0.7);
+            }
+
+            .card {
+                width: 160px;
+                height: 220px;
+                margin-left: -80px;
+                margin-top: -130px;
+            }
+
+            .card-content-wrapper {
+                padding: 0.25rem;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                overflow: hidden;
+            }
+
+            .card-header {
+                flex-shrink: 0;
+                margin-bottom: 0.1rem;
+            }
+
+            .card-title {
+                font-size: 0.7rem;
+                line-height: 0.9;
+                margin-bottom: 0.05rem;
+                font-weight: 600;
+            }
+
+            .card-subtitle {
+                font-size: 0.5rem;
+                margin-bottom: 0;
+                line-height: 0.9;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+            }
+
+            .card-main {
+                flex: 1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 40px;
+                max-height: 70px;
+            }
+
+            .card-image {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+
+            .card-footer {
+                font-size: 0.45rem;
+                padding: 0.05rem;
+                max-height: 35px;
+                line-height: 1;
+                flex-shrink: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+                line-clamp: 2;
+            }
+
+            .navigation {
+                width: 30px;
+                height: 30px;
+                font-size: 12px;
+                opacity: 1;
+                pointer-events: auto;
+                z-index: 1001;
+                background: rgba(255, 255, 255, 0.3);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.4);
+            }
+
+            .navigation:hover {
+                background: rgba(255, 255, 255, 0.4);
+                transform: translateY(-50%) scale(1.05);
+            }
+
+            .nav-prev {
+                left: -40px;
+            }
+
+            .nav-next {
+                right: -40px;
+            }
+
+            /* Glass efektleri küçük mobil optimizasyonu */
+            .glass {
+                padding: 0.6rem;
+                border-radius: 1.2rem;
+            }
+
+            .inner-glass {
+                padding: 0.2rem;
+                border-radius: 0.6rem;
+                margin-bottom: 0.2rem;
+            }
+
+            .inner-glass:last-child {
+                margin-bottom: 0;
+            }
+
+            /* Controls daha küçük mobil konumlandırma */
+            .controls {
+                bottom: 0px;
+                padding: 6px 12px;
+                gap: 8px;
+            }
+
+            .control-btn {
+                width: 10px;
+                height: 10px;
+                cursor: pointer;
+                pointer-events: auto;
+                opacity: 0.8;
+                transition: all 0.3s ease;
+            }
+
+            .control-btn:hover {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+
+            .control-btn.active {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+
+            /* Dual form küçük ekranlarda da yan yana kalacak ama küçülecek */
+            .dual-form-container {
+                width: 100%;
+                min-height: 450px;
+                transform: scale(0.95);
+                margin: 10px 0;
+            }
+
+            /* Form yazıları küçültme */
+            .form h1,
+            .form h2 {
+                font-size: 1.2rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .form p.sub {
+                font-size: 0.7rem;
+                margin: 0 0 15px;
+            }
+
+            .form input,
+            .form textarea {
+                padding: 8px 10px;
+                margin: 5px 0;
+                font-size: 0.8rem;
+            }
+
+            .form button {
+                font-size: 0.7rem;
+                padding: 8px 25px;
+            }
+
+            .form {
+                padding: 0 25px;
+            }
+
+            /* Overlay panel yazıları küçültme */
+            .overlay-panel h1 {
+                font-size: 1.1rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .overlay-panel p {
+                font-size: 0.75rem;
+                margin-bottom: 1rem;
+            }
+
+            .overlay-panel .ghost {
+                font-size: 0.7rem !important;
+                padding: 10px 20px !important;
+            }
+
+            /* About text küçük mobil düzenleme */
+            .about-text h3 {
+                font-size: 1.85rem !important;
+                margin-bottom: 0.8rem;
+                line-height: 1.2;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                hyphens: auto;
+                white-space: normal;
+            }
+
+            .about-text p {
+                font-size: 1.45rem !important;
+                line-height: 1.5;
+                margin-bottom: 0.8rem;
+            }
+
+            /* Card back küçük mobil düzenleme */
+            .card-back-content {
+                padding: 0.6rem;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .card-back p {
+                font-size: 0.65rem;
+                line-height: 1.3;
+                text-align: center;
+                margin: 0;
+                padding: 0.3rem;
+            }
+
+            .card-back .inner-glass {
+                padding: 0.4rem;
+                border-radius: 0.6rem;
+                margin-bottom: 0;
             }
         }
+
         /* RotatingText Styles */
         .text-rotate {
             display: flex;
@@ -2534,14 +2994,12 @@
             --duration: 3s;
             border: 2px solid transparent;
             background:
-                conic-gradient(
-                    from calc(var(--gradient-angle) - var(--gradient-angle-offset)),
+                conic-gradient(from calc(var(--gradient-angle) - var(--gradient-angle-offset)),
                     transparent,
                     var(--accent) var(--gradient-percent),
                     var(--gradient-shine) calc(var(--gradient-percent) * 2),
                     var(--accent) calc(var(--gradient-percent) * 3),
-                    transparent calc(var(--gradient-percent) * 4)
-                ) border-box,
+                    transparent calc(var(--gradient-percent) * 4)) border-box,
                 var(--bg-tertiary);
             background-clip: padding-box, border-box;
             animation: var(--animation) var(--duration);
@@ -2549,7 +3007,9 @@
         }
 
         /* Keep spacing below image so the overlapping button has room */
-        .about-image { padding-bottom: 56px; }
+        .about-image {
+            padding-bottom: 56px;
+        }
 
         .about-resume-btn:hover {
             filter: drop-shadow(0 0 15px var(--accent)) drop-shadow(0 0 40px var(--accent));
@@ -2563,7 +3023,9 @@
                 0 0 25px rgba(0, 255, 136, 0.5);
         }
 
-        .about-resume-btn:focus { outline: none; }
+        .about-resume-btn:focus {
+            outline: none;
+        }
 
         .about-resume-btn:active {
             transform: translate(-50%, 0);
@@ -2586,9 +3048,18 @@
             transform-origin: bottom;
         }
 
-        .about-resume-btn:hover span { transform: scaleY(1); transform-origin: top; }
-        .about-resume-btn span:nth-child(even) { transform-origin: top; }
-        .about-resume-btn:hover span:nth-child(even) { transform-origin: bottom; }
+        .about-resume-btn:hover span {
+            transform: scaleY(1);
+            transform-origin: top;
+        }
+
+        .about-resume-btn span:nth-child(even) {
+            transform-origin: top;
+        }
+
+        .about-resume-btn:hover span:nth-child(even) {
+            transform-origin: bottom;
+        }
 
         .about-resume-btn::before,
         .about-resume-btn::after {
@@ -2628,11 +3099,24 @@
             animation-composition: add;
         }
 
-        @keyframes gradient-angle { to { --gradient-angle: 360deg; } }
-        @keyframes shimmer { to { rotate: 360deg; } }
+        @keyframes gradient-angle {
+            to {
+                --gradient-angle: 360deg;
+            }
+        }
+
+        @keyframes shimmer {
+            to {
+                rotate: 360deg;
+            }
+        }
 
         /* Simple spinner keyframes */
-        @keyframes spin360 { to { transform: rotate(360deg); } }
+        @keyframes spin360 {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
         /* Enlarge about text by ~1.5x */
         .about-text h3 {
@@ -2796,7 +3280,8 @@
         <div class="nav-container">
             <!-- SparkleNavbar Component Container -->
             <div id="sparkle-navbar-container">
-                <div id="sparkle-navbar-light" class="navigation-menu" style="margin: 20px 0px; position: relative; z-index: 1; display: none;">
+                <div id="sparkle-navbar-light" class="navigation-menu"
+                    style="margin: 20px 0px; position: relative; z-index: 1; display: none;">
                     <ul style="margin: 0px; padding: 0px; list-style: none; display: flex; gap: 40px;">
                         <li class="active"><button
                                 style="appearance: none; border: none; cursor: pointer; background-color: transparent; padding: 0px; margin: 0px; line-height: 22px; transition: color 0.25s; color: var(--text-primary); font-size: 0.95rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Ana
@@ -2818,7 +3303,8 @@
                         style="--active-element-scale-x: 0; --active-element-scale-y: 0.25; --active-element-show: 1; --active-element-opacity: 0; --active-element-width: 0px; --active-element-strike-x: -50%; --active-element-mask-position: 40%; position: absolute; left: 0px; top: 34px; height: 3px; width: 36px; border-radius: 2px; background-color: rgb(0, 102, 204); opacity: var(--active-element-show); translate: none; rotate: none; scale: none; transform: translate(27.7578px, 0px) rotateY(180deg);">
                     </div>
                 </div>
-                <div id="sparkle-navbar-dark" class="navigation-menu" style="margin: 20px 0px; position: relative; z-index: 1;">
+                <div id="sparkle-navbar-dark" class="navigation-menu"
+                    style="margin: 20px 0px; position: relative; z-index: 1;">
                     <ul style="margin: 0px; padding: 0px; list-style: none; display: flex; gap: 40px;">
                         <li class="active"><button
                                 style="appearance: none; border: none; cursor: pointer; background-color: transparent; padding: 0px; margin: 0px; line-height: 22px; transition: color 0.25s; color: var(--text-primary); font-size: 0.95rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Ana
@@ -3297,10 +3783,9 @@
 
                 <!-- Social Links -->
                 <div class="social-links">
-                    <a href="#"><i class="fab fa-github"></i></a>
-                    <a href="#"><i class="fab fa-linkedin"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-dribbble"></i></a>
+                    <a href="https://github.com/icessi1" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/%C3%B6mer-faruk-bulut-650668152/" target="_blank"><i
+                            class="fab fa-linkedin"></i></a>
                 </div>
             </div>
         </div>
@@ -3670,7 +4155,7 @@
                 htmlElement.classList.add('light-theme');
                 localStorage.setItem('theme', 'light');
                 if (logoImg) logoImg.src = 'iconbeyaz.png';
-                
+
                 // Update SparkleNavbar color for light theme
                 const container = document.getElementById('sparkle-navbar-container');
                 if (container) {
@@ -3684,7 +4169,7 @@
                 htmlElement.classList.remove('light-theme');
                 localStorage.setItem('theme', 'dark');
                 if (logoImg) logoImg.src = 'iconnnn.png';
-                
+
                 // Update SparkleNavbar color for dark theme
                 const container = document.getElementById('sparkle-navbar-container');
                 if (container) {
@@ -4023,15 +4508,44 @@
 
             // Kart çevirme olayı
             cards.forEach((card) => {
+                // Mouse click
                 card.addEventListener('click', (e) => {
                     if (!isDragging) {
                         e.stopPropagation();
                         card.classList.toggle('card-flipped');
                     }
                 });
+
+                // Touch tap (mobil için)
+                let touchStartTime = 0;
+                let touchStartX = 0;
+                let touchStartY = 0;
+
+                card.addEventListener('touchstart', (e) => {
+                    touchStartTime = Date.now();
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                });
+
+                card.addEventListener('touchend', (e) => {
+                    const touchEndTime = Date.now();
+                    const touchEndX = e.changedTouches[0].clientX;
+                    const touchEndY = e.changedTouches[0].clientY;
+
+                    const timeDiff = touchEndTime - touchStartTime;
+                    const distanceX = Math.abs(touchEndX - touchStartX);
+                    const distanceY = Math.abs(touchEndY - touchStartY);
+
+                    // Kısa dokunma ve az hareket = tap
+                    if (timeDiff < 300 && distanceX < 10 && distanceY < 10 && !isDragging) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        card.classList.toggle('card-flipped');
+                    }
+                });
             });
 
-            // Container sürükleme olayları
+            // Container sürükleme olayları (Mouse)
             container.addEventListener('mousedown', (e) => {
                 isDragging = false;
                 startX = e.clientX;
@@ -4040,6 +4554,56 @@
 
                 document.addEventListener('mousemove', onMouseMove);
                 document.addEventListener('mouseup', onMouseUp);
+            });
+
+            // Touch event'leri (Mobil)
+            container.addEventListener('touchstart', (e) => {
+                isDragging = false;
+                startX = e.touches[0].clientX;
+                startRotation = currentRotation;
+                carousel.style.transition = 'none';
+                e.preventDefault(); // Scroll'u engelle
+            });
+
+            container.addEventListener('touchmove', (e) => {
+                const deltaX = e.touches[0].clientX - startX;
+
+                if (Math.abs(deltaX) > 3) { // Mobilde daha hassas
+                    isDragging = true;
+                }
+
+                if (isDragging) {
+                    // Mobilde daha hızlı dönüş için çarpanı artır
+                    currentRotation = startRotation + deltaX * 0.8;
+                    carousel.style.transform = `rotateY(${currentRotation}deg)`;
+                }
+                e.preventDefault(); // Scroll'u engelle
+            });
+
+            container.addEventListener('touchend', (e) => {
+                const endX = e.changedTouches[0].clientX;
+                const deltaX = endX - startX;
+
+                // Swipe detection
+                if (Math.abs(deltaX) > 50 && !isDragging) {
+                    if (deltaX > 0) {
+                        // Sağa swipe - önceki kart
+                        currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+                    } else {
+                        // Sola swipe - sonraki kart
+                        currentIndex = (currentIndex + 1) % cards.length;
+                    }
+                    currentRotation = -currentIndex * 60;
+                    carousel.style.transition = 'transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)';
+                    carousel.style.transform = `rotateY(${currentRotation}deg)`;
+                    resetAllCards();
+                    updateControls();
+                } else if (isDragging) {
+                    isDragging = false;
+                    carousel.style.transition = 'transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)';
+                    snapToNearest();
+                }
+                e.preventDefault();
             });
 
             function onMouseMove(e) {
@@ -4087,8 +4651,28 @@
 
             // Controls
             controlBtns.forEach((btn, idx) => {
+                // Mouse click
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
+                    e.preventDefault();
+                    currentIndex = idx;
+                    currentRotation = -idx * 60;
+                    carousel.style.transition = 'transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)';
+
+                    resetAllCards();
+                    carousel.style.transform = `rotateY(${currentRotation}deg)`;
+                    updateControls();
+                });
+
+                // Touch events
+                btn.addEventListener('touchstart', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                });
+
+                btn.addEventListener('touchend', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
                     currentIndex = idx;
                     currentRotation = -idx * 60;
                     carousel.style.transition = 'transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)';
@@ -4108,8 +4692,28 @@
 
             // Navigation
             if (navPrev) {
+                // Mouse click
                 navPrev.addEventListener('click', (e) => {
                     e.stopPropagation();
+                    e.preventDefault();
+                    currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+                    currentRotation = -currentIndex * 60;
+                    carousel.style.transition = 'transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)';
+
+                    resetAllCards();
+                    carousel.style.transform = `rotateY(${currentRotation}deg)`;
+                    updateControls();
+                });
+
+                // Touch events
+                navPrev.addEventListener('touchstart', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                });
+
+                navPrev.addEventListener('touchend', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
                     currentIndex = (currentIndex - 1 + cards.length) % cards.length;
                     currentRotation = -currentIndex * 60;
                     carousel.style.transition = 'transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)';
@@ -4121,8 +4725,28 @@
             }
 
             if (navNext) {
+                // Mouse click
                 navNext.addEventListener('click', (e) => {
                     e.stopPropagation();
+                    e.preventDefault();
+                    currentIndex = (currentIndex + 1) % cards.length;
+                    currentRotation = -currentIndex * 60;
+                    carousel.style.transition = 'transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)';
+
+                    resetAllCards();
+                    carousel.style.transform = `rotateY(${currentRotation}deg)`;
+                    updateControls();
+                });
+
+                // Touch events
+                navNext.addEventListener('touchstart', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                });
+
+                navNext.addEventListener('touchend', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
                     currentIndex = (currentIndex + 1) % cards.length;
                     currentRotation = -currentIndex * 60;
                     carousel.style.transition = 'transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)';
@@ -4375,11 +4999,11 @@
             if (container) {
                 const navItems = ['Ana Sayfa', 'Hakkında', 'Yetenekler', 'Projeler', 'İletişim'];
                 const root = ReactDOM.createRoot(container);
-                
+
                 // Check initial theme
                 const currentTheme = localStorage.getItem('theme') || 'dark';
                 const initialColor = currentTheme === 'light' ? '#0066cc' : '#00ff88';
-                
+
                 root.render(React.createElement(SparkleNavbar, {
                     items: navItems,
                     color: initialColor
@@ -4749,12 +5373,12 @@
 
     <script>
         // Mobile Bottom Navigation Functionality
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
             const mobileNavBubble = document.querySelector('.mobile-nav-bubble');
             const mobileNavContainer = document.querySelector('.mobile-nav-container');
             const mobileBottomNav = document.querySelector('.mobile-bottom-nav');
-            
+
             if (!mobileNavBubble || !mobileNavItems.length) return;
 
             // Auto-hide functionality
@@ -4810,7 +5434,7 @@
             }
 
             mobileNavItems.forEach(item => {
-                item.addEventListener('click', function(e) {
+                item.addEventListener('click', function (e) {
                     e.preventDefault();
                     setActiveItem(this);
                     const targetId = this.getAttribute('data-section');
@@ -4842,14 +5466,14 @@
             }
 
             let mobileNavScrollTimeout;
-            window.addEventListener('scroll', function() {
+            window.addEventListener('scroll', function () {
                 if (window.innerWidth <= 768) {
                     clearTimeout(mobileNavScrollTimeout);
                     mobileNavScrollTimeout = setTimeout(updateMobileNavOnScroll, 50);
                 }
             });
 
-            window.addEventListener('resize', function() {
+            window.addEventListener('resize', function () {
                 const activeItem = document.querySelector('.mobile-nav-item.active');
                 if (activeItem && window.innerWidth <= 768) {
                     updateBubblePosition(activeItem);
@@ -4862,19 +5486,19 @@
             }
 
             mobileNavItems.forEach(item => {
-                item.addEventListener('mouseenter', function() {
+                item.addEventListener('mouseenter', function () {
                     if (!this.classList.contains('active')) {
                         this.style.transform = 'scale(1.05) translateY(-2px)';
                         this.style.transition = 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)';
                     }
                 });
-                item.addEventListener('mouseleave', function() {
+                item.addEventListener('mouseleave', function () {
                     if (!this.classList.contains('active')) {
                         this.style.transform = 'scale(1) translateY(0)';
                         this.style.transition = 'all 0.4s cubic-bezier(0.23, 1, 0.32, 1)';
                     }
                 });
-                item.addEventListener('click', function() {
+                item.addEventListener('click', function () {
                     this.style.transform = 'scale(0.95)';
                     this.style.transition = 'all 0.1s ease';
                     setTimeout(() => {
@@ -4886,11 +5510,11 @@
                         this.style.transition = 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)';
                     }, 100);
                 });
-                item.addEventListener('touchstart', function() {
+                item.addEventListener('touchstart', function () {
                     this.style.transform = 'scale(0.95)';
                     this.style.transition = 'all 0.1s ease';
                 });
-                item.addEventListener('touchend', function() {
+                item.addEventListener('touchend', function () {
                     setTimeout(() => {
                         if (this.classList.contains('active')) {
                             this.style.transform = 'scale(1)';
@@ -4928,40 +5552,40 @@
             // Create ScrollReveal container
             const scrollRevealContainer = document.createElement('div');
             scrollRevealContainer.className = 'scroll-reveal';
-            
+
             // Create text element
             const textElement = document.createElement('p');
             textElement.className = 'scroll-reveal-text';
-            
+
             // Text content
             const text = `Ben, güzel ve işlevsel web uygulamaları geliştirmeye tutkusu olan yaratıcı bir ön yüz geliştiricisiyim. With expertise in modern JavaScript frameworks and a keen eye for design, I bring ideas to life through code.
 
 Web geliştirme yolculuğum, web sitelerinin nasıl çalıştığına duyduğum merakla başladı, and it has evolved into a career where I get to solve complex problems and create user experiences that make a difference.
 
 Kod yazmadığım zamanlarda beni yeni teknolojiler keşfederken bulabilirsiniz, contributing to open-source projects, or sharing my knowledge with the developer community.`;
-            
+
             // Split text into words
             const words = text.split(/(\s+)/).map((word, index) => {
                 if (word.match(/^\s+$/)) return word;
                 return `<span class="word">${word}</span>`;
             }).join('');
-            
+
             textElement.innerHTML = words;
             scrollRevealContainer.appendChild(textElement);
-            
+
             // Add to about section
             aboutTextSection.appendChild(scrollRevealContainer);
-            
+
             // Get word elements
             const wordElements = scrollRevealContainer.querySelectorAll('.word');
-            
+
             // Set initial states
-            gsap.set(scrollRevealContainer, { 
-                transformOrigin: '0% 50%', 
-                rotate: 1 
+            gsap.set(scrollRevealContainer, {
+                transformOrigin: '0% 50%',
+                rotate: 1
             });
-            
-            gsap.set(wordElements, { 
+
+            gsap.set(wordElements, {
                 opacity: 0,
                 filter: 'blur(10px)'
             });
@@ -4996,7 +5620,7 @@ Kod yazmadığım zamanlarda beni yeni teknolojiler keşfederken bulabilirsiniz,
         }
 
         // Initialize when DOM is ready
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             setTimeout(initScrollReveal, 1000);
         });
     </script>
@@ -5006,7 +5630,7 @@ Kod yazmadığım zamanlarda beni yeni teknolojiler keşfederken bulabilirsiniz,
         // Simple RotatingText implementation using GSAP
         function initRotatingText() {
             console.log('Initializing RotatingText...');
-            
+
             // Check if GSAP is loaded
             if (typeof gsap === 'undefined') {
                 console.log('GSAP not loaded, retrying...');
@@ -5026,11 +5650,13 @@ Kod yazmadığım zamanlarda beni yeni teknolojiler keşfederken bulabilirsiniz,
 
             // Texts to rotate
             const texts = [
-                'Tutkulu Ön Yüz Geliştirici',
-                'React Developer',
-                'Frontend Expert',
-                'UI/UX Designer',
-                'JavaScript Master'
+                'Frontend Developer',
+                'Full Stack Developer',
+                'Web Developer',
+                'Data Scientist',
+                'Software Engineer',
+                'Game Developer',
+                'Cyber Security',
             ];
 
             let currentIndex = 0;
@@ -5059,7 +5685,7 @@ Kod yazmadığım zamanlarda beni yeni teknolojiler keşfederken bulabilirsiniz,
                 color: inherit;
             `;
 
-            // Split text into characters
+            // Split text into characters with proper spacing
             function splitText(text) {
                 return text.split('').map((char, index) => {
                     const span = document.createElement('span');
@@ -5068,6 +5694,7 @@ Kod yazmadığım zamanlarda beni yeni teknolojiler keşfederken bulabilirsiniz,
                         display: inline-block;
                         transform: translateY(100%);
                         opacity: 0;
+                        ${char === ' ' ? 'min-width: 0.25em;' : ''}
                     `;
                     return span;
                 });
@@ -5080,13 +5707,13 @@ Kod yazmadığım zamanlarda beni yeni teknolojiler keşfederken bulabilirsiniz,
                 textElement.innerHTML = '';
                 characters.forEach(char => textElement.appendChild(char));
 
-                gsap.fromTo(characters, 
-                    { 
-                        y: '100%', 
-                        opacity: 0 
+                gsap.fromTo(characters,
+                    {
+                        y: '100%',
+                        opacity: 0
                     },
-                    { 
-                        y: '0%', 
+                    {
+                        y: '0%',
                         opacity: 1,
                         duration: 0.6,
                         stagger: 0.025,
@@ -5137,7 +5764,7 @@ Kod yazmadığım zamanlarda beni yeni teknolojiler keşfederken bulabilirsiniz,
         }
 
         // Initialize RotatingText when DOM is ready
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             console.log('DOM loaded, starting RotatingText in 2 seconds...');
             setTimeout(initRotatingText, 2000);
         });
@@ -5173,7 +5800,7 @@ Kod yazmadığım zamanlarda beni yeni teknolojiler keşfederken bulabilirsiniz,
                 note.appendChild(spinner);
                 note.appendChild(text);
                 document.body.appendChild(note);
-                setTimeout(()=> note.remove(), 2000);
+                setTimeout(() => note.remove(), 2000);
 
                 // start download after 2s
                 setTimeout(() => {
