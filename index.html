@@ -3477,7 +3477,7 @@
         }
 
         .menu {
-            display: flex;
+            display: flex !important;
             flex-direction: column;
             height: auto;
             margin: 0;
@@ -3485,6 +3485,8 @@
             padding: 0;
             padding-top: 180px !important;
             list-style: none;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
 
         .projects .menu {
@@ -3501,11 +3503,41 @@
             background: transparent;
             height: 75px;
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
 
         .menu__item.expanded {
             flex: 0 0 400px;
             height: 400px;
+            animation: expandCard 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .menu__item.collapsing {
+            animation: collapseCard 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes expandCard {
+            from {
+                flex: 0 0 75px;
+                height: 75px;
+            }
+            to {
+                flex: 0 0 400px;
+                height: 400px;
+            }
+        }
+
+        @keyframes collapseCard {
+            from {
+                flex: 0 0 400px;
+                height: 400px;
+            }
+            to {
+                flex: 0 0 75px;
+                height: 75px;
+            }
         }
 
         .menu__item:first-child {
@@ -3513,7 +3545,7 @@
         }
 
         .menu__item-link {
-            display: flex;
+            display: flex !important;
             align-items: center;
             justify-content: center;
             height: 100%;
@@ -3529,6 +3561,8 @@
             letter-spacing: 0.05em;
             transition: all 0.6s ease;
             z-index: 2;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
 
         .menu__item:hover .menu__item-link {
@@ -3592,6 +3626,33 @@
 
         .menu__item.expanded .project-card-content {
             display: flex;
+            animation: fadeInContent 0.5s ease 0.3s both;
+        }
+
+        .menu__item.collapsing .project-card-content {
+            animation: fadeOutContent 0.3s ease both;
+        }
+
+        @keyframes fadeInContent {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOutContent {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
         }
 
         .project-card-header {
@@ -3758,22 +3819,108 @@
             }
         }
 
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
+        /* Tablet devices (iPad Mini, etc.) */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .projects h2 {
+                font-size: 2.8rem;
+            }
+
+            .menu {
+                padding-top: 120px !important;
+            }
+
+            .projects .menu {
+                padding-top: 160px !important;
+            }
+        }
+
+        /* Mobile Responsive - Phones only */
+        @media (max-width: 767px) {
+            /* Projects section title responsive - same as other section titles */
+            .projects h2 {
+                font-size: 2.5rem !important;
+                padding: 0 1rem;
+            }
+
+            /* Title container padding adjustment for mobile - Much more space below title */
+            .projects > div:first-of-type {
+                padding: 0 1rem 5rem 1rem !important;
+            }
+
+            /* Menu padding for mobile - More space above menu items */
+            .menu {
+                padding-top: 4rem !important;
+                margin-top: 0 !important;
+                display: flex !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+
+            .projects .menu {
+                padding-top: 4rem !important;
+                margin-top: 0 !important;
+            }
+
             .menu-wrap {
-                height: auto;
+                height: auto !important;
                 margin: 0;
+                padding: 0;
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                z-index: 100 !important;
             }
 
             .menu__item {
-                height: 75px;
-                flex: 0 0 75px;
+                height: 75px !important;
+                flex: 0 0 75px !important;
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+
+            .menu__item.expanded {
+                height: auto !important;
+                min-height: 400px;
+                animation: expandCardMobile 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .menu__item.collapsing {
+                animation: collapseCardMobile 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                overflow: hidden;
+            }
+
+            @keyframes expandCardMobile {
+                from {
+                    height: 75px;
+                    min-height: 75px;
+                }
+                to {
+                    height: auto;
+                    min-height: 400px;
+                }
+            }
+
+            @keyframes collapseCardMobile {
+                from {
+                    min-height: 400px;
+                    opacity: 1;
+                }
+                to {
+                    min-height: 75px;
+                    height: 75px;
+                    opacity: 1;
+                }
             }
 
             .menu__item-link {
-                font-size: clamp(1rem, 4vw, 1.3rem);
+                font-size: clamp(1rem, 4vw, 1.3rem) !important;
                 padding: 0 1rem;
                 line-height: 1.2;
+                display: flex !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                color: #fff !important;
             }
 
             .marquee span {
@@ -3790,6 +3937,105 @@
 
             .marquee__inner-wrap {
                 animation: marquee 30s linear infinite;
+            }
+
+            /* Mobile card styles */
+            .project-card-content {
+                padding: 1.5rem;
+            }
+
+            .project-card-title {
+                font-size: 1.4rem;
+            }
+
+            .project-card-description {
+                font-size: 0.95rem;
+            }
+
+            .project-card-btn {
+                font-size: 0.9rem;
+                padding: 0.7rem 1.2rem;
+            }
+
+            /* Mobile button touch effect */
+            .project-card-btn:active {
+                transform: scale(0.95);
+                background: transparent;
+                color: #060010;
+            }
+
+            .project-card-btn:active::before {
+                width: 300px;
+                height: 300px;
+            }
+
+            .project-close-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1.5rem;
+            }
+
+            /* Section padding */
+            .projects {
+                padding-top: 3rem;
+                padding-bottom: 3rem;
+            }
+
+            .projects h2 {
+                font-size: clamp(1.8rem, 6vw, 3rem);
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 480px) {
+            .projects {
+                padding-top: 2rem;
+                padding-bottom: 2rem;
+            }
+
+            /* Title padding for small screens - more spacing */
+            .projects > div:first-of-type {
+                padding: 0 0.5rem 4rem 0.5rem !important;
+            }
+
+            .projects h2 {
+                font-size: 2rem !important;
+            }
+
+            .menu {
+                padding-top: 3rem !important;
+            }
+
+            .projects .menu {
+                padding-top: 8rem !important;
+            }
+
+            .menu__item {
+                height: 65px;
+                flex: 0 0 65px;
+            }
+
+            .project-card-btn {
+                width: 100%;
+                font-size: 0.85rem;
+                padding: 0.6rem 1rem;
+            }
+
+            /* Small screen button touch effect */
+            .project-card-btn:active {
+                transform: scale(0.95);
+                background: transparent;
+                color: #060010;
+            }
+
+            .project-card-btn:active::before {
+                width: 300px;
+                height: 300px;
+            }
+
+            .project-card-footer {
+                flex-direction: column;
+                gap: 0.5rem;
             }
         }
 
@@ -3923,7 +4169,8 @@
             border-color: #007bff !important;
         }
 
-        :root.light-theme .project-card-btn:hover {
+        :root.light-theme .project-card-btn:hover,
+        :root.light-theme .project-card-btn:active {
             background: transparent !important;
             color: #007bff !important;
             border-color: #007bff !important;
@@ -3935,7 +4182,8 @@
             color: #000 !important;
         }
 
-        :root.light-theme .project-card-btn.demo:hover {
+        :root.light-theme .project-card-btn.demo:hover,
+        :root.light-theme .project-card-btn.demo:active {
             background: transparent !important;
             color: var(--accent) !important;
             border-color: var(--accent) !important;
@@ -4478,10 +4726,10 @@
         
         <div style="padding: 0 0 5rem 0; text-align: center; position: relative; z-index: 20; order: 1;">
             <h2 style="font-size: 3rem; font-weight: 700; color: var(--text-primary); margin: 0;" data-i18n="projectsTitle">Öne Çıkan Projeler</h2>
-                            </div>
+        </div>
         
         <!-- Flowing Menu Projects -->
-        <div class="menu-wrap">
+        <div class="menu-wrap" style="position: relative; z-index: 20;">
             <nav class="menu" id="flowingMenu">
                 <!-- Menu items will be dynamically inserted here -->
             </nav>
@@ -6993,40 +7241,108 @@ Kod yazmadığım zamanlarda beni yeni teknolojiler keşfederken bulabilirsiniz,
                     e.preventDefault();
                     
                     const menuWrap = document.querySelector('.menu-wrap');
+                    const isMobile = window.innerWidth <= 768;
                     
-                    // Close other expanded items
+                    // Close other expanded items and reset their marquees
                     document.querySelectorAll('.menu__item.expanded').forEach(item => {
                         if (item !== menuItem) {
+                            // Add collapsing animation
+                            item.classList.add('collapsing');
                             item.classList.remove('expanded');
+                            
+                            // Remove collapsing class after animation
+                            setTimeout(() => {
+                                item.classList.remove('collapsing');
+                            }, 400);
+                            
+                            // Reset marquee for closed items on mobile
+                            if (isMobile) {
+                                const otherMarquee = item.querySelector('.marquee');
+                                const otherMarqueeInnerWrap = item.querySelector('.marquee__inner-wrap');
+                                if (otherMarquee && otherMarqueeInnerWrap) {
+                                    gsap.timeline({ defaults: { duration: 0.3, ease: 'expo' } })
+                                        .to(otherMarquee, { y: '-101%' })
+                                        .to(otherMarqueeInnerWrap, { y: '101%' }, 0);
+                                }
+                            }
                         }
                     });
                     
                     // Toggle current item
-                    menuItem.classList.toggle('expanded');
+                    const wasExpanded = menuItem.classList.contains('expanded');
+                    
+                    if (wasExpanded) {
+                        // Collapsing
+                        menuItem.classList.add('collapsing');
+                        menuItem.classList.remove('expanded');
+                        
+                        // Reset marquee on mobile
+                        if (isMobile) {
+                            gsap.timeline({ defaults: { duration: 0.3, ease: 'expo' } })
+                                .to(marquee, { y: '-101%' })
+                                .to(marqueeInnerWrap, { y: '101%' }, 0);
+                        }
+                        
+                        // Remove collapsing class after animation
+                        setTimeout(() => {
+                            menuItem.classList.remove('collapsing');
+                        }, 400);
+                    } else {
+                        // Expanding
+                        menuItem.classList.add('expanded');
+                    }
                     
                     // Toggle menu-wrap height
                     if (menuItem.classList.contains('expanded')) {
                         menuWrap.classList.add('has-expanded');
-                    } else {
-                        // Check if any item is still expanded
-                        const hasAnyExpanded = document.querySelectorAll('.menu__item.expanded').length > 0;
-                        if (!hasAnyExpanded) {
-                            menuWrap.classList.remove('has-expanded');
+                        
+                        // Scroll to item on mobile after expansion
+                        if (isMobile) {
+                            setTimeout(() => {
+                                const yOffset = -80;
+                                const element = menuItem;
+                                const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                                window.scrollTo({top: y, behavior: 'smooth'});
+                            }, 400);
                         }
+                    } else {
+                        // Check if any item is still expanded after animation
+                        setTimeout(() => {
+                            const hasAnyExpanded = document.querySelectorAll('.menu__item.expanded').length > 0;
+                            if (!hasAnyExpanded) {
+                                menuWrap.classList.remove('has-expanded');
+                            }
+                        }, 400);
                     }
                 });
 
                 // Close button event
                 const closeBtn = cardContent.querySelector('.project-close-btn');
                 closeBtn.addEventListener('click', () => {
+                    // Add collapsing animation
+                    menuItem.classList.add('collapsing');
                     menuItem.classList.remove('expanded');
+                    
+                    // Reset marquee animation on mobile
+                    if (window.innerWidth <= 768) {
+                        gsap.timeline({ defaults: { duration: 0.3, ease: 'expo' } })
+                            .to(marquee, { y: '-101%' })
+                            .to(marqueeInnerWrap, { y: '101%' }, 0);
+                    }
+                    
+                    // Remove collapsing class after animation ends
+                    setTimeout(() => {
+                        menuItem.classList.remove('collapsing');
+                    }, 400);
                     
                     // Check if any item is still expanded
                     const menuWrap = document.querySelector('.menu-wrap');
-                    const hasAnyExpanded = document.querySelectorAll('.menu__item.expanded').length > 0;
-                    if (!hasAnyExpanded) {
-                        menuWrap.classList.remove('has-expanded');
-                    }
+                    setTimeout(() => {
+                        const hasAnyExpanded = document.querySelectorAll('.menu__item.expanded').length > 0;
+                        if (!hasAnyExpanded) {
+                            menuWrap.classList.remove('has-expanded');
+                        }
+                    }, 400);
                 });
 
                 // Add event listeners
@@ -7044,28 +7360,76 @@ Kod yazmadığım zamanlarda beni yeni teknolojiler keşfederken bulabilirsiniz,
                     return xDiff * xDiff + yDiff * yDiff;
                 };
 
-                link.addEventListener('mouseenter', (ev) => {
-                    const rect = menuItem.getBoundingClientRect();
-                    const x = ev.clientX - rect.left;
-                    const y = ev.clientY - rect.top;
-                    const edge = findClosestEdge(x, y, rect.width, rect.height);
+                // Desktop hover animations
+                if (window.innerWidth > 768) {
+                    link.addEventListener('mouseenter', (ev) => {
+                        if (menuItem.classList.contains('expanded')) return;
+                        
+                        const rect = menuItem.getBoundingClientRect();
+                        const x = ev.clientX - rect.left;
+                        const y = ev.clientY - rect.top;
+                        const edge = findClosestEdge(x, y, rect.width, rect.height);
 
-                    gsap.timeline({ defaults: animationDefaults })
-                        .set(marquee, { y: edge === 'top' ? '-101%' : '101%' }, 0)
-                        .set(marqueeInnerWrap, { y: edge === 'top' ? '101%' : '-101%' }, 0)
-                        .to([marquee, marqueeInnerWrap], { y: '0%' }, 0);
-                });
+                        gsap.timeline({ defaults: animationDefaults })
+                            .set(marquee, { y: edge === 'top' ? '-101%' : '101%' }, 0)
+                            .set(marqueeInnerWrap, { y: edge === 'top' ? '101%' : '-101%' }, 0)
+                            .to([marquee, marqueeInnerWrap], { y: '0%' }, 0);
+                    });
 
-                link.addEventListener('mouseleave', (ev) => {
-                    const rect = menuItem.getBoundingClientRect();
-                    const x = ev.clientX - rect.left;
-                    const y = ev.clientY - rect.top;
-                    const edge = findClosestEdge(x, y, rect.width, rect.height);
+                    link.addEventListener('mouseleave', (ev) => {
+                        if (menuItem.classList.contains('expanded')) return;
+                        
+                        const rect = menuItem.getBoundingClientRect();
+                        const x = ev.clientX - rect.left;
+                        const y = ev.clientY - rect.top;
+                        const edge = findClosestEdge(x, y, rect.width, rect.height);
 
-                    gsap.timeline({ defaults: animationDefaults })
-                        .to(marquee, { y: edge === 'top' ? '-101%' : '101%' }, 0)
-                        .to(marqueeInnerWrap, { y: edge === 'top' ? '101%' : '-101%' }, 0);
-                });
+                        gsap.timeline({ defaults: animationDefaults })
+                            .to(marquee, { y: edge === 'top' ? '-101%' : '101%' }, 0)
+                            .to(marqueeInnerWrap, { y: edge === 'top' ? '101%' : '-101%' }, 0);
+                    });
+                } else {
+                    // Mobile touch animations
+                    let touchTimer;
+                    let touchHoldActive = false;
+
+                    link.addEventListener('touchstart', (ev) => {
+                        if (menuItem.classList.contains('expanded')) return;
+                        
+                        touchHoldActive = false;
+                        
+                        // Start marquee animation after 300ms hold
+                        touchTimer = setTimeout(() => {
+                            touchHoldActive = true;
+                            gsap.timeline({ defaults: animationDefaults })
+                                .set(marquee, { y: '-101%' }, 0)
+                                .set(marqueeInnerWrap, { y: '101%' }, 0)
+                                .to([marquee, marqueeInnerWrap], { y: '0%' }, 0);
+                        }, 300);
+                    });
+
+                    link.addEventListener('touchend', () => {
+                        clearTimeout(touchTimer);
+                        
+                        if (touchHoldActive) {
+                            // Hide marquee if it was shown
+                            gsap.timeline({ defaults: animationDefaults })
+                                .to(marquee, { y: '-101%' }, 0)
+                                .to(marqueeInnerWrap, { y: '101%' }, 0);
+                            touchHoldActive = false;
+                        }
+                    });
+
+                    link.addEventListener('touchcancel', () => {
+                        clearTimeout(touchTimer);
+                        if (touchHoldActive) {
+                            gsap.timeline({ defaults: animationDefaults })
+                                .to(marquee, { y: '-101%' }, 0)
+                                .to(marqueeInnerWrap, { y: '101%' }, 0);
+                            touchHoldActive = false;
+                        }
+                    });
+                }
 
                 return menuItem;
             }
