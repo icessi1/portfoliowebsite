@@ -17,6 +17,9 @@
     <script src="https://unpkg.com/gsap@3.12.2/dist/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/framer-motion@11.0.0/dist/framer-motion.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Three.js for Galaxy Animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400');
 
@@ -1525,6 +1528,49 @@
             padding: 8rem 0;
             background: var(--bg-secondary);
             position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+        }
+
+        .projects::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 300px;
+            background: linear-gradient(to bottom, rgba(26, 26, 26, 0.9) 0%, rgba(26, 26, 26, 0.6) 30%, rgba(26, 26, 26, 0.3) 60%, transparent 100%);
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .projects::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 300px;
+            background: linear-gradient(to top, rgba(26, 26, 26, 0.9) 0%, rgba(26, 26, 26, 0.6) 30%, rgba(26, 26, 26, 0.3) 60%, transparent 100%);
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .projects .galaxy-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.8;
+            display: block;
+            pointer-events: none;
+        }
+
+        .projects .container {
+            position: relative;
+            z-index: 4;
         }
 
         .projects-grid {
@@ -1690,7 +1736,7 @@
             border-radius: 10px;
             box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             width: 768px;
             max-width: 100%;
             min-height: 480px;
@@ -1885,6 +1931,246 @@
 
         .form button:active {
             transform: scale(0.95);
+        }
+
+        /* Modern Calendar Picker */
+        .calendar-picker {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .calendar-input {
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .calendar-input::after {
+            content: '📅';
+            font-size: 16px;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .calendar-dropdown {
+            position: fixed;
+            z-index: 10000;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 255, 0, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            width: 320px;
+            box-shadow:
+                0 25px 50px rgba(0, 0, 0, 0.5),
+                0 10px 20px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(0, 255, 0, 0.1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .calendar-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-nav {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 10px 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            min-width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calendar-nav:hover {
+            background: rgba(0, 255, 0, 0.1);
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .calendar-month-year {
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin-bottom: 15px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            padding: 8px 4px;
+            text-transform: uppercase;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            color: var(--text-primary);
+            font-weight: 500;
+            min-height: 36px;
+        }
+
+        .calendar-day:hover:not(.disabled) {
+            background: rgba(0, 255, 0, 0.1);
+            color: var(--accent);
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 255, 0, 0.2);
+        }
+
+        .calendar-day.selected {
+            background: linear-gradient(135deg, var(--accent), rgba(0, 255, 0, 0.8));
+            color: var(--bg-primary);
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0, 255, 0, 0.4);
+            transform: scale(1.05);
+        }
+
+        .calendar-day.other-month {
+            color: var(--text-secondary);
+            opacity: 0.3;
+        }
+
+        .calendar-day.disabled {
+            color: var(--text-secondary);
+            opacity: 0.2;
+            cursor: not-allowed;
+        }
+
+        .calendar-day.today {
+            background: rgba(0, 255, 0, 0.15);
+            font-weight: 600;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+
+        .time-picker {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 255, 0, 0.2);
+            margin-top: 15px;
+        }
+
+        .time-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            width: 70px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .time-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(0, 255, 0, 0.1);
+            box-shadow: 0 0 0 3px rgba(0, 255, 0, 0.2);
+            transform: scale(1.05);
+        }
+
+        .time-separator {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        /* Light theme calendar */
+        :root.light-theme .calendar-dropdown {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 123, 255, 0.2);
+            box-shadow:
+                0 25px 50px rgba(0, 0, 0, 0.15),
+                0 10px 20px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(0, 123, 255, 0.1);
+        }
+
+        :root.light-theme .calendar-nav {
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        :root.light-theme .calendar-nav:hover {
+            background: rgba(0, 123, 255, 0.1);
+            border-color: #007bff;
+            color: #007bff;
+        }
+
+        :root.light-theme .calendar-day:hover:not(.disabled) {
+            background: rgba(0, 123, 255, 0.1);
+            color: #007bff;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+        }
+
+        :root.light-theme .calendar-day.selected {
+            background: linear-gradient(135deg, #007bff, rgba(0, 123, 255, 0.8));
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+        }
+
+        :root.light-theme .calendar-day.today {
+            background: rgba(0, 123, 255, 0.15);
+            border: 1px solid rgba(0, 123, 255, 0.3);
+        }
+
+        :root.light-theme .time-picker {
+            border-top: 1px solid rgba(0, 123, 255, 0.2);
+        }
+
+        :root.light-theme .time-input {
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        :root.light-theme .time-input:focus {
+            border-color: #007bff;
+            background: rgba(0, 123, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+        }
+
+        :root.light-theme .time-separator {
+            color: #007bff;
         }
 
         .form button:focus {
@@ -2838,6 +3124,34 @@
                 padding: 0 25px;
             }
 
+            /* Mobil calendar optimizasyonları */
+            .calendar-dropdown {
+                width: calc(100vw - 20px);
+                max-width: 320px;
+                padding: 16px;
+            }
+
+            .calendar-grid {
+                gap: 2px;
+            }
+
+            .calendar-day {
+                min-height: 32px;
+                font-size: 13px;
+            }
+
+            .calendar-nav {
+                padding: 8px 10px;
+                font-size: 16px;
+                min-width: 36px;
+            }
+
+            .time-input {
+                width: 60px;
+                padding: 8px 10px;
+                font-size: 14px;
+            }
+
             /* Overlay panel yazıları küçültme */
             .overlay-panel h1 {
                 font-size: 1.1rem;
@@ -3125,6 +3439,506 @@
 
         .about-text p {
             font-size: 1.65rem;
+        }
+
+        /* Flowing Menu Styles */
+        .projects {
+            position: relative;
+            overflow: visible !important;
+        }
+
+        .projects .container {
+            margin-bottom: 3rem !important;
+        }
+
+        .projects h2 {
+            margin-bottom: 0;
+        }
+
+        #projects {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-wrap {
+            width: 100%;
+            height: auto;
+            overflow: visible;
+            margin: 0;
+            margin-top: 0 !important;
+            padding: 0;
+            border-radius: 0;
+            background: transparent;
+            position: static;
+            z-index: 10;
+            clear: both;
+            order: 999;
+            transition: min-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            height: auto;
+            margin: 0;
+            margin-top: 0 !important;
+            padding: 0;
+            padding-top: 180px !important;
+            list-style: none;
+        }
+
+        .projects .menu {
+            margin-top: 0 !important;
+            padding-top: 180px !important;
+        }
+
+        .menu__item {
+            flex: 0 0 75px;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: transparent;
+            height: 75px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .menu__item.expanded {
+            flex: 0 0 400px;
+            height: 400px;
+        }
+
+        .menu__item:first-child {
+            border-top: none;
+        }
+
+        .menu__item-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            position: relative;
+            cursor: pointer;
+            text-transform: uppercase;
+            text-decoration: none;
+            white-space: nowrap;
+            font-weight: 600;
+            color: #fff;
+            font-size: clamp(1.1rem, 1.5vw, 1.4rem);
+            letter-spacing: 0.05em;
+            transition: all 0.6s ease;
+            z-index: 2;
+        }
+
+        .menu__item:hover .menu__item-link {
+            color: #060010;
+        }
+
+        .menu__item-link:focus {
+            outline: none;
+            color: #fff;
+        }
+
+        .marquee {
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: #fff;
+            transform: translate3d(0, 101%, 0);
+            z-index: 10;
+            will-change: transform;
+        }
+
+        .menu__item:hover:not(.expanded) .marquee {
+            transform: translate3d(0, 0%, 0);
+        }
+
+        .menu__item.expanded .marquee {
+            transform: translate3d(0, 0%, 0) !important;
+            height: 100%;
+        }
+
+        .menu__item.expanded .menu__item-link {
+            display: none;
+        }
+
+        .menu-wrap.has-expanded {
+            min-height: 1100px;
+            padding-bottom: 3rem;
+        }
+
+        .menu__item.expanded {
+            pointer-events: auto;
+        }
+
+        .project-card-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 2rem;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 15;
+            color: #060010;
+        }
+
+        .menu__item.expanded .project-card-content {
+            display: flex;
+        }
+
+        .project-card-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .project-card-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+            color: #060010;
+            text-align: center;
+        }
+
+        .project-close-btn {
+            position: absolute;
+            right: 0;
+            background: rgba(6, 0, 16, 0.1);
+            color: #060010;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+        }
+
+        .project-close-btn:hover {
+            transform: rotate(90deg) scale(1.1);
+            background: rgba(6, 0, 16, 0.2);
+        }
+
+        .project-card-description {
+            flex: 1;
+            padding: 1.5rem 0;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #060010;
+            overflow-y: auto;
+        }
+
+        .project-card-footer {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+
+        .project-card-btn {
+            padding: 0.5rem 1.2rem;
+            background: #060010;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid #060010;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .project-card-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .project-card-btn:hover {
+            background: transparent;
+            color: #060010;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(6, 0, 16, 0.2);
+        }
+
+        .project-card-btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .project-card-btn.demo {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #060010;
+        }
+
+        .project-card-btn.demo::before {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .project-card-btn.demo:hover {
+            background: transparent;
+            color: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 8px 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .marquee__inner-wrap {
+            height: 100%;
+            width: fit-content;
+            display: flex;
+            gap: 0;
+            will-change: transform;
+            animation: marquee 25s linear infinite;
+        }
+
+        .marquee__inner {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100%;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .marquee span {
+            color: #060010;
+            white-space: nowrap;
+            text-transform: uppercase;
+            font-weight: 400;
+            font-size: clamp(1rem, 1.3vw, 1.3rem);
+            line-height: 1;
+            padding: 0 1.5vw;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        .marquee__img {
+            width: 120px;
+            height: 45px;
+            margin: 0 1.5vw;
+            border-radius: 22px;
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+            display: inline-block;
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .menu-wrap {
+                height: auto;
+                margin: 0;
+            }
+
+            .menu__item {
+                height: 75px;
+                flex: 0 0 75px;
+            }
+
+            .menu__item-link {
+                font-size: clamp(1rem, 4vw, 1.3rem);
+                padding: 0 1rem;
+                line-height: 1.2;
+            }
+
+            .marquee span {
+                font-size: clamp(0.9rem, 3.5vw, 1.2rem);
+                padding: 0 3vw;
+            }
+
+            .marquee__img {
+                width: 90px;
+                height: 38px;
+                margin: 0 3vw;
+                border-radius: 18px;
+            }
+
+            .marquee__inner-wrap {
+                animation: marquee 30s linear infinite;
+            }
+        }
+
+        /* Light Theme - FlowingMenu */
+        :root.light-theme .menu__item {
+            background: transparent !important;
+            border-top: 1px solid rgba(0, 123, 255, 0.12) !important;
+            box-shadow: none !important;
+        }
+
+        :root.light-theme .menu__item-link {
+            color: #000000 !important;
+            font-weight: 600 !important;
+        }
+
+        :root.light-theme .menu__item:hover:not(.expanded) .menu__item-link {
+            color: #000000 !important;
+        }
+
+        :root.light-theme .menu__item:hover:not(.expanded) .marquee {
+            transform: translate3d(0, 0%, 0) !important;
+        }
+
+        :root.light-theme .marquee {
+            background: #007bff !important;
+            transform: translate3d(0, 101%, 0) !important;
+            z-index: 10 !important;
+        }
+
+        :root.light-theme .marquee span {
+            color: #ffffff !important;
+        }
+
+        :root.light-theme .marquee__img {
+            border: 2px solid rgba(255, 255, 255, 0.4);
+        }
+
+        :root.light-theme .menu__item.expanded {
+            position: relative !important;
+        }
+
+        :root.light-theme .menu__item.expanded .marquee {
+            transform: translate3d(0, 0%, 0) !important;
+            height: 100% !important;
+            width: 100% !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            z-index: 12 !important;
+            background: #007bff !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            overflow: hidden !important;
+            pointer-events: none !important;
+        }
+
+        :root.light-theme .menu__item.expanded .menu__item-link {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+
+        :root.light-theme .menu__item.expanded .project-card-content {
+            display: flex !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            z-index: 15 !important;
+        }
+
+        :root.light-theme .marquee__inner-wrap {
+            animation: marquee 15s linear infinite !important;
+        }
+
+        :root.light-theme .marquee__inner {
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        :root.light-theme .galaxy-canvas {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%) !important;
+        }
+
+        :root.light-theme .projects .galaxy-canvas {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%) !important;
+        }
+
+        :root.light-theme .projects::before {
+            background: linear-gradient(to bottom, rgb(255 255 255 / 90%) 0%, rgb(255 255 255 / 60%) 30%, rgb(255 255 255 / 30%) 60%, rgb(255 255 255 / 0%) 100%) !important;
+        }
+
+        :root.light-theme .projects::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 300px;
+            background: linear-gradient(to top, rgb(255 255 255 / 90%) 0%, rgb(255 255 255 / 60%) 30%, rgb(255 255 255 / 30%) 60%, rgb(255 255 255 / 0%) 100%);
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        :root.light-theme .project-card-content {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px) !important;
+            box-shadow: 0 8px 32px rgba(0, 123, 255, 0.15) !important;
+        }
+
+        :root.light-theme .project-card-title {
+            color: #1a1a1a !important;
+        }
+
+        :root.light-theme .project-card-description {
+            color: #333333 !important;
+        }
+
+        :root.light-theme .project-close-btn {
+            background: rgba(0, 123, 255, 0.1) !important;
+            color: #007bff !important;
+        }
+
+        :root.light-theme .project-close-btn:hover {
+            background: rgba(0, 123, 255, 0.2) !important;
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        :root.light-theme .project-card-btn {
+            background: #007bff !important;
+            color: #fff !important;
+            border-color: #007bff !important;
+        }
+
+        :root.light-theme .project-card-btn:hover {
+            background: transparent !important;
+            color: #007bff !important;
+            border-color: #007bff !important;
+        }
+
+        :root.light-theme .project-card-btn.demo {
+            background: var(--accent) !important;
+            border-color: var(--accent) !important;
+            color: #000 !important;
+        }
+
+        :root.light-theme .project-card-btn.demo:hover {
+            background: transparent !important;
+            color: var(--accent) !important;
+            border-color: var(--accent) !important;
         }
     </style>
 </head>
@@ -3420,7 +4234,7 @@
             <h2 class="section-title" data-i18n="aboutTitle">Hakkımda</h2>
             <div class="about-content">
                 <div class="about-image">
-                    <img src="https://pbs.twimg.com/profile_images/1908937770761871360/OoW1VTIz_400x400.jpg"
+                    <img src="file.jpg"
                         alt="Ömer Faruk Bulut">
                     <a href="#" id="aboutResumeBtn" class="about-resume-btn">Özgeçmiş</a>
                 </div>
@@ -3658,75 +4472,19 @@
 
     <!-- Projects Section -->
     <section class="projects" id="projects"
-        style="opacity: 0; transform: translateY(50px); transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1);">
-        <div class="container">
-            <h2 class="section-title" data-i18n="projectsTitle">Öne Çıkan Projeler</h2>
-            <div class="projects-grid">
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="https://picsum.photos/seed/ecommerce/400/250" alt="E-commerce Platform">
-                        <div class="project-overlay">
-                            <div class="project-links">
-                                <a href="#">Live Demo</a>
-                                <a href="#">View Code</a>
+        style="opacity: 0; transform: translateY(50px); transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1); padding-top: 4rem;">
+        <!-- Galaxy Background Animation -->
+        <canvas class="galaxy-canvas" id="galaxyCanvas"></canvas>
+        
+        <div style="padding: 0 0 5rem 0; text-align: center; position: relative; z-index: 20; order: 1;">
+            <h2 style="font-size: 3rem; font-weight: 700; color: var(--text-primary); margin: 0;" data-i18n="projectsTitle">Öne Çıkan Projeler</h2>
                             </div>
-                        </div>
-                    </div>
-                    <div class="project-content">
-                        <h3>E-commerce Platform</h3>
-                        <p>A modern e-commerce solution with real-time inventory management and secure payment
-                            processing.</p>
-                        <div class="project-tags">
-                            <span class="tag">React</span>
-                            <span class="tag">Node.js</span>
-                            <span class="tag">MongoDB</span>
-                            <span class="tag">Stripe</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="https://picsum.photos/seed/taskmanager/400/250" alt="Task Management App">
-                        <div class="project-overlay">
-                            <div class="project-links">
-                                <a href="#">Live Demo</a>
-                                <a href="#">View Code</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="project-content">
-                        <h3>Task Management App</h3>
-                        <p>Collaborative task management tool with real-time updates and team collaboration features.
-                        </p>
-                        <div class="project-tags">
-                            <span class="tag">Vue.js</span>
-                            <span class="tag">Firebase</span>
-                            <span class="tag">Tailwind CSS</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="https://picsum.photos/seed/weather/400/250" alt="Weather Dashboard">
-                        <div class="project-overlay">
-                            <div class="project-links">
-                                <a href="#">Live Demo</a>
-                                <a href="#">View Code</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="project-content">
-                        <h3>Weather Dashboard</h3>
-                        <p>Interactive weather application with location-based forecasts and beautiful data
-                            visualizations.</p>
-                        <div class="project-tags">
-                            <span class="tag">JavaScript</span>
-                            <span class="tag">API Integration</span>
-                            <span class="tag">Chart.js</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        
+        <!-- Flowing Menu Projects -->
+        <div class="menu-wrap">
+            <nav class="menu" id="flowingMenu">
+                <!-- Menu items will be dynamically inserted here -->
+            </nav>
         </div>
     </section>
 
@@ -3757,9 +4515,36 @@
                         <form class="form" id="meetingForm">
                             <h2 data-i18n="meetingTitle">Tanışma Görüşmesi Planla</h2>
                             <p class="sub" data-i18n="meetingSub">Projenizi konuşalım</p>
-                            <input type="text" id="meetingName" placeholder="Adınız" required="">
-                            <input type="email" id="meetingEmail" placeholder="E-posta" required="">
-                            <input type="datetime-local" id="meetingDateTime" required="">
+                            <div class="form-input-wrapper">
+                                <div class="left-light"></div>
+                                <input type="text" id="meetingName" placeholder="Adınız" required="">
+                            </div>
+                            <div class="form-input-wrapper">
+                                <div class="left-light"></div>
+                                <input type="email" id="meetingEmail" placeholder="E-posta" required="">
+                            </div>
+                            <div class="form-input-wrapper">
+                                <div class="left-light"></div>
+                                <div class="calendar-picker">
+                                    <input type="text" id="meetingDateTime" placeholder="Tarih ve saat seçin" readonly
+                                        class="calendar-input" required="">
+                                    <div class="calendar-dropdown" id="calendarDropdown">
+                                        <div class="calendar-header">
+                                            <button type="button" class="calendar-nav" id="prevMonth">‹</button>
+                                            <div class="calendar-month-year" id="monthYear"></div>
+                                            <button type="button" class="calendar-nav" id="nextMonth">›</button>
+                                        </div>
+                                        <div class="calendar-grid" id="calendarGrid"></div>
+                                        <div class="time-picker">
+                                            <input type="number" class="time-input" id="hourInput" min="0" max="23"
+                                                placeholder="00">
+                                            <span class="time-separator">:</span>
+                                            <input type="number" class="time-input" id="minuteInput" min="0" max="59"
+                                                placeholder="00">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <button type="submit" data-i18n="btnSchedule">Planla</button>
                         </form>
                     </div>
@@ -3903,7 +4688,240 @@
         document.addEventListener('DOMContentLoaded', () => {
             initCursor();
             animateCursor();
+
+            // Calendar'ı biraz gecikme ile initialize et
+            setTimeout(() => {
+                initCalendarPicker();
+            }, 500);
         });
+
+        // Modern Calendar Picker JavaScript
+        function initCalendarPicker() {
+            const calendarInput = document.getElementById('meetingDateTime');
+            const calendarDropdown = document.getElementById('calendarDropdown');
+            const monthYear = document.getElementById('monthYear');
+            const calendarGrid = document.getElementById('calendarGrid');
+            const prevMonth = document.getElementById('prevMonth');
+            const nextMonth = document.getElementById('nextMonth');
+            const hourInput = document.getElementById('hourInput');
+            const minuteInput = document.getElementById('minuteInput');
+
+            if (!calendarInput || !calendarDropdown) {
+                console.warn('Calendar elements not found');
+                return;
+            }
+
+            let currentDate = new Date();
+            let selectedDate = null;
+            let selectedHour = 9;
+            let selectedMinute = 0;
+
+            const months = [
+                'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+                'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
+            ];
+
+            const dayHeaders = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+
+            // Initialize time inputs
+            if (hourInput) hourInput.value = selectedHour.toString().padStart(2, '0');
+            if (minuteInput) minuteInput.value = selectedMinute.toString().padStart(2, '0');
+
+            // Move dropdown to body to avoid overflow issues
+            document.body.appendChild(calendarDropdown);
+            calendarDropdown.style.position = 'fixed';
+
+            // Toggle calendar dropdown
+            calendarInput.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isActive = calendarDropdown.classList.contains('active');
+
+                if (!isActive) {
+                    // Position dropdown relative to input
+                    const inputRect = calendarInput.getBoundingClientRect();
+                    const dropdownWidth = 320;
+
+                    let left = inputRect.left + (inputRect.width / 2) - (dropdownWidth / 2);
+                    let top = inputRect.bottom + 8;
+
+                    // Keep dropdown within viewport
+                    if (left < 10) left = 10;
+                    if (left + dropdownWidth > window.innerWidth - 10) {
+                        left = window.innerWidth - dropdownWidth - 10;
+                    }
+
+                    // If dropdown would go below viewport, show it above input
+                    if (top + 400 > window.innerHeight) {
+                        top = inputRect.top - 408;
+                    }
+
+                    calendarDropdown.style.left = left + 'px';
+                    calendarDropdown.style.top = top + 'px';
+                    calendarDropdown.style.transform = 'none';
+
+                    calendarDropdown.classList.add('active');
+                    renderCalendar();
+                } else {
+                    calendarDropdown.classList.remove('active');
+                }
+            });
+
+            // Close calendar when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.calendar-picker') && !calendarDropdown.contains(e.target)) {
+                    calendarDropdown.classList.remove('active');
+                }
+            });
+
+            // Reposition dropdown on window resize
+            window.addEventListener('resize', () => {
+                if (calendarDropdown.classList.contains('active')) {
+                    const inputRect = calendarInput.getBoundingClientRect();
+                    const dropdownWidth = 320;
+
+                    let left = inputRect.left + (inputRect.width / 2) - (dropdownWidth / 2);
+                    let top = inputRect.bottom + 8;
+
+                    // Keep dropdown within viewport
+                    if (left < 10) left = 10;
+                    if (left + dropdownWidth > window.innerWidth - 10) {
+                        left = window.innerWidth - dropdownWidth - 10;
+                    }
+
+                    // If dropdown would go below viewport, show it above input
+                    if (top + 400 > window.innerHeight) {
+                        top = inputRect.top - 408;
+                    }
+
+                    calendarDropdown.style.left = left + 'px';
+                    calendarDropdown.style.top = top + 'px';
+                }
+            });
+
+            // Navigation buttons
+            if (prevMonth) {
+                prevMonth.addEventListener('click', () => {
+                    currentDate.setMonth(currentDate.getMonth() - 1);
+                    renderCalendar();
+                });
+            }
+
+            if (nextMonth) {
+                nextMonth.addEventListener('click', () => {
+                    currentDate.setMonth(currentDate.getMonth() + 1);
+                    renderCalendar();
+                });
+            }
+
+            // Time input handlers
+            if (hourInput) {
+                hourInput.addEventListener('change', () => {
+                    selectedHour = parseInt(hourInput.value) || 0;
+                    if (selectedHour < 0) selectedHour = 0;
+                    if (selectedHour > 23) selectedHour = 23;
+                    hourInput.value = selectedHour.toString().padStart(2, '0');
+                    updateSelectedDateTime();
+                });
+
+            }
+
+            if (minuteInput) {
+                minuteInput.addEventListener('change', () => {
+                    selectedMinute = parseInt(minuteInput.value) || 0;
+                    if (selectedMinute < 0) selectedMinute = 0;
+                    if (selectedMinute > 59) selectedMinute = 59;
+                    minuteInput.value = selectedMinute.toString().padStart(2, '0');
+                    updateSelectedDateTime();
+                });
+            }
+
+            function renderCalendar() {
+                if (!monthYear || !calendarGrid) return;
+
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth();
+
+                monthYear.textContent = `${months[month]} ${year}`;
+
+                // Clear grid
+                calendarGrid.innerHTML = '';
+
+                // Add day headers
+                dayHeaders.forEach(day => {
+                    const dayHeader = document.createElement('div');
+                    dayHeader.className = 'calendar-day-header';
+                    dayHeader.textContent = day;
+                    calendarGrid.appendChild(dayHeader);
+                });
+
+                // Get first day of month and number of days
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0);
+                const daysInMonth = lastDay.getDate();
+                const startingDayOfWeek = (firstDay.getDay() + 6) % 7; // Convert to Monday = 0
+
+                // Add empty cells for days before month starts
+                for (let i = 0; i < startingDayOfWeek; i++) {
+                    const emptyDay = document.createElement('div');
+                    emptyDay.className = 'calendar-day other-month';
+                    calendarGrid.appendChild(emptyDay);
+                }
+
+                // Add days of the month
+                const today = new Date();
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'calendar-day';
+                    dayElement.textContent = day;
+
+                    const dayDate = new Date(year, month, day);
+
+                    // Mark today
+                    if (dayDate.toDateString() === today.toDateString()) {
+                        dayElement.classList.add('today');
+                    }
+
+                    // Mark selected date
+                    if (selectedDate && dayDate.toDateString() === selectedDate.toDateString()) {
+                        dayElement.classList.add('selected');
+                    }
+
+                    // Disable past dates
+                    if (dayDate < today.setHours(0, 0, 0, 0)) {
+                        dayElement.classList.add('disabled');
+                    } else {
+                        dayElement.addEventListener('click', () => {
+                            // Remove previous selection
+                            document.querySelectorAll('.calendar-day.selected').forEach(el => {
+                                el.classList.remove('selected');
+                            });
+
+                            // Add selection to clicked day
+                            dayElement.classList.add('selected');
+                            selectedDate = new Date(year, month, day);
+                            updateSelectedDateTime();
+                        });
+                    }
+
+                    calendarGrid.appendChild(dayElement);
+                }
+            }
+
+            function updateSelectedDateTime() {
+                if (selectedDate) {
+                    const formattedDate = selectedDate.toLocaleDateString('tr-TR');
+                    const formattedTime = `${selectedHour.toString().padStart(2, '0')}:${selectedMinute.toString().padStart(2, '0')}`;
+                    calendarInput.value = `${formattedDate} ${formattedTime}`;
+
+                    // Set the actual datetime value for form submission
+                    const isoDateTime = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), selectedHour, selectedMinute);
+                    calendarInput.setAttribute('data-datetime', isoDateTime.toISOString());
+                }
+            }
+
+            // Initialize calendar
+            renderCalendar();
+        }
 
         // Handle window resize
         window.addEventListener('resize', () => {
@@ -4242,7 +5260,14 @@
             // Get form values
             const name = document.getElementById('meetingName').value;
             const email = document.getElementById('meetingEmail').value;
-            const dateTime = document.getElementById('meetingDateTime').value;
+            const dateTimeInput = document.getElementById('meetingDateTime');
+            const dateTime = dateTimeInput.getAttribute('data-datetime') || dateTimeInput.value;
+
+            // Validate that a date is selected
+            if (!dateTime) {
+                alert('Lütfen bir tarih ve saat seçin.');
+                return;
+            }
 
             // Format date for display
             const meetingDate = new Date(dateTime);
@@ -5819,6 +6844,419 @@ Kod yazmadığım zamanlarda beni yeni teknolojiler keşfederken bulabilirsiniz,
                 btn.style.left = '50%';
                 btn.style.transform = 'translateX(-50%)';
             });
+        });
+    </script>
+
+    <!-- Flowing Menu Initialization -->
+    <script>
+        // Flowing Menu Initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            const projects = [
+                {
+                    title: 'Portfolio Website',
+                    description: 'Modern tasarım, responsive layout ve interaktif animasyonlar ile geliştirilmiş kişisel portfolio web sitesi. HTML, CSS ve JavaScript kullanılarak oluşturulmuştur.',
+                    link: 'https://github.com/icessi1/portfoliowebsite',
+                    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop',
+                    demo: 'https://icessi1.github.io/portfoliowebsite'
+                },
+                {
+                    title: '2D Game Programming',
+                    description: 'Unity ile geliştirilmiş 2D platform oyunu. Karakter kontrolü, düşman AI, seviye tasarımı ve skorlama sistemi içerir. C# programlama dili kullanılmıştır.',
+                    link: 'https://github.com/icessi1/2D-Oyun-Programlama-Final',
+                    image: 'https://images.unsplash.com/photo-1556438064-2d7646166914?w=800&h=600&fit=crop'
+                },
+                {
+                    title: 'Cardboard VR Game',
+                    description: 'Mobil gerçeklik gözlüğü (Google Cardboard) ile bayrak kapma oyunu. VR teknolojisi kullanarak geliştirilmiş immersive oyun deneyimi sunar.',
+                    link: 'https://github.com/icessi1/Cardboard_Game',
+                    image: 'https://images.unsplash.com/photo-1592478411213-6153e4c4a8b4?w=800&h=600&fit=crop'
+                },
+                {
+                    title: 'Traffic Analysis',
+                    description: 'Video görüntüsü üzerinden trafikteki araçları tespit ederek anlık trafik yoğunluğu, hız ve geçiş süresi hesaplama sistemi. OpenCV ve Python kullanılmıştır.',
+                    link: 'https://github.com/icessi1/Gercek-Zamanli-Trafik-Degiskenlerinin-Goruntu-Isleme-Esasli-Olcumu',
+                    image: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=600&fit=crop'
+                },
+                {
+                    title: 'Brain Tumor AI',
+                    description: 'CNN (Convolutional Neural Network) ile beyin tümörü görüntülerinin sınıflandırılması. Derin öğrenme algoritmaları kullanarak tıbbi görüntü analizi yapar.',
+                    link: 'https://github.com/icessi1/Brain-Tumor-Image-Classification-CNN-main',
+                    image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&h=600&fit=crop'
+                },
+                {
+                    title: 'Traffic Accident Prediction',
+                    description: 'Trafik kazası verilerini analiz ederek kaza riskini tahmin eden makine öğrenmesi modeli. Veri analizi ve tahmin algoritmaları ile geliştirilmiştir.',
+                    link: 'https://github.com/icessi1/Trafik-Kazasi-Tahmini-Machine-Learn',
+                    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop'
+                },
+                {
+                    title: '2D Platform Game',
+                    description: 'Unity ile geliştirilmiş 2D platform oyunu. İlk oyun projesi olarak karakter hareketi, düşmanlar ve seviye tasarımı içerir.',
+                    link: 'https://github.com/icessi1/2D-Platform',
+                    image: 'https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=800&h=600&fit=crop'
+                },
+                {
+                    title: 'Site Automation',
+                    description: 'Entity Framework kullanarak geliştirilmiş site otomasyon sistemi. Veritabanı yönetimi ve CRUD operasyonları içerir.',
+                    link: 'https://github.com/icessi1/site-otomasyon-entity-framework',
+                    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop'
+                },
+                {
+                    title: 'Dormitory Management',
+                    description: 'Windows Form ile geliştirilmiş yurt otomasyon sistemi. Öğrenci kayıt, oda yönetimi ve raporlama modülleri içerir.',
+                    link: 'https://github.com/icessi1/WindowsFormYurtOtomasyonu',
+                    image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&h=600&fit=crop'
+                },
+                {
+                    title: 'Website Project',
+                    description: 'JavaScript ile geliştirilmiş web sitesi projesi. Modern web teknolojileri kullanarak responsive ve interaktif site oluşturulmuştur.',
+                    link: 'https://github.com/icessi1/sogutinsaat.github.io',
+                    image: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=600&fit=crop'
+                }
+            ];
+
+            const menuContainer = document.getElementById('flowingMenu');
+            if (!menuContainer) return;
+
+            // Create menu items
+            projects.forEach((project, idx) => {
+                const menuItem = createMenuItem(project);
+                menuContainer.appendChild(menuItem);
+            });
+
+            function createMenuItem(project) {
+                const menuItem = document.createElement('div');
+                menuItem.className = 'menu__item';
+
+                const link = document.createElement('a');
+                link.className = 'menu__item-link';
+                link.href = project.link;
+                link.target = '_blank';
+                link.textContent = project.title;
+
+                const marquee = document.createElement('div');
+                marquee.className = 'marquee';
+
+                const marqueeInnerWrap = document.createElement('div');
+                marqueeInnerWrap.className = 'marquee__inner-wrap';
+
+                // Create two marquee inners for seamless loop
+                for (let j = 0; j < 2; j++) {
+                    const marqueeInner = document.createElement('div');
+                    marqueeInner.className = 'marquee__inner';
+                    marqueeInner.setAttribute('aria-hidden', 'true');
+
+                    // Create 4 repetitions of content in each inner
+                    for (let i = 0; i < 4; i++) {
+                        const span = document.createElement('span');
+                        span.textContent = project.title;
+                        marqueeInner.appendChild(span);
+
+                        const img = document.createElement('div');
+                        img.className = 'marquee__img';
+                        img.style.backgroundImage = `url(${project.image})`;
+                        marqueeInner.appendChild(img);
+                    }
+
+                    marqueeInnerWrap.appendChild(marqueeInner);
+                }
+                
+                marquee.appendChild(marqueeInnerWrap);
+                
+                // Create card content
+                const cardContent = document.createElement('div');
+                cardContent.className = 'project-card-content';
+                cardContent.innerHTML = `
+                    <div class="project-card-header">
+                        <h3 class="project-card-title">${project.title}</h3>
+                        <button class="project-close-btn">×</button>
+                    </div>
+                    <div class="project-card-description">
+                        ${project.description || 'Proje açıklaması yakında eklenecek...'}
+                    </div>
+                    <div class="project-card-footer">
+                        <a href="${project.link}" target="_blank" class="project-card-btn">
+                            <span>GitHub'da Görüntüle</span>
+                        </a>
+                        ${project.demo ? `<a href="${project.demo}" target="_blank" class="project-card-btn demo">
+                            <span>Demo</span>
+                        </a>` : ''}
+                    </div>
+                `;
+
+                menuItem.appendChild(link);
+                menuItem.appendChild(marquee);
+                menuItem.appendChild(cardContent);
+
+                // Click event to expand/collapse
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    const menuWrap = document.querySelector('.menu-wrap');
+                    
+                    // Close other expanded items
+                    document.querySelectorAll('.menu__item.expanded').forEach(item => {
+                        if (item !== menuItem) {
+                            item.classList.remove('expanded');
+                        }
+                    });
+                    
+                    // Toggle current item
+                    menuItem.classList.toggle('expanded');
+                    
+                    // Toggle menu-wrap height
+                    if (menuItem.classList.contains('expanded')) {
+                        menuWrap.classList.add('has-expanded');
+                    } else {
+                        // Check if any item is still expanded
+                        const hasAnyExpanded = document.querySelectorAll('.menu__item.expanded').length > 0;
+                        if (!hasAnyExpanded) {
+                            menuWrap.classList.remove('has-expanded');
+                        }
+                    }
+                });
+
+                // Close button event
+                const closeBtn = cardContent.querySelector('.project-close-btn');
+                closeBtn.addEventListener('click', () => {
+                    menuItem.classList.remove('expanded');
+                    
+                    // Check if any item is still expanded
+                    const menuWrap = document.querySelector('.menu-wrap');
+                    const hasAnyExpanded = document.querySelectorAll('.menu__item.expanded').length > 0;
+                    if (!hasAnyExpanded) {
+                        menuWrap.classList.remove('has-expanded');
+                    }
+                });
+
+                // Add event listeners
+                const animationDefaults = { duration: 0.6, ease: 'expo' };
+
+                const findClosestEdge = (mouseX, mouseY, width, height) => {
+                    const topEdgeDist = distMetric(mouseX, mouseY, width / 2, 0);
+                    const bottomEdgeDist = distMetric(mouseX, mouseY, width / 2, height);
+                    return topEdgeDist < bottomEdgeDist ? 'top' : 'bottom';
+                };
+
+                const distMetric = (x, y, x2, y2) => {
+                    const xDiff = x - x2;
+                    const yDiff = y - y2;
+                    return xDiff * xDiff + yDiff * yDiff;
+                };
+
+                link.addEventListener('mouseenter', (ev) => {
+                    const rect = menuItem.getBoundingClientRect();
+                    const x = ev.clientX - rect.left;
+                    const y = ev.clientY - rect.top;
+                    const edge = findClosestEdge(x, y, rect.width, rect.height);
+
+                    gsap.timeline({ defaults: animationDefaults })
+                        .set(marquee, { y: edge === 'top' ? '-101%' : '101%' }, 0)
+                        .set(marqueeInnerWrap, { y: edge === 'top' ? '101%' : '-101%' }, 0)
+                        .to([marquee, marqueeInnerWrap], { y: '0%' }, 0);
+                });
+
+                link.addEventListener('mouseleave', (ev) => {
+                    const rect = menuItem.getBoundingClientRect();
+                    const x = ev.clientX - rect.left;
+                    const y = ev.clientY - rect.top;
+                    const edge = findClosestEdge(x, y, rect.width, rect.height);
+
+                    gsap.timeline({ defaults: animationDefaults })
+                        .to(marquee, { y: edge === 'top' ? '-101%' : '101%' }, 0)
+                        .to(marqueeInnerWrap, { y: edge === 'top' ? '101%' : '-101%' }, 0);
+                });
+
+                return menuItem;
+            }
+        });
+    </script>
+
+    <!-- Galaxy Animation Script -->
+    <script>
+        class GalaxyAnimation {
+            constructor() {
+                this.canvas = document.getElementById('galaxyCanvas');
+                if (!this.canvas) return;
+                
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+                this.renderer = new THREE.WebGLRenderer({ 
+                    canvas: this.canvas, 
+                    alpha: true,
+                    antialias: true 
+                });
+                
+                this.setupRenderer();
+                this.createGalaxy();
+                this.setupCamera();
+                this.animate();
+                this.handleResize();
+            }
+
+            setupRenderer() {
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                this.renderer.setClearColor(0x000000, 0);
+                this.renderer.domElement.style.position = 'absolute';
+                this.renderer.domElement.style.top = '0';
+                this.renderer.domElement.style.left = '0';
+                this.renderer.domElement.style.width = '100%';
+                this.renderer.domElement.style.height = '100%';
+                this.renderer.domElement.style.display = 'block';
+                this.renderer.domElement.style.pointerEvents = 'none';
+            }
+
+            createGalaxy() {
+                // Orijinal kodunuzdaki parametreler
+                const parameters = {
+                    count: 100000,
+                    size: 0.01,
+                    radius: 2.15,
+                    branches: 3,
+                    spin: 3,
+                    randomness: 5,
+                    randomnessPower: 4,
+                    insideColor: '#00ff88', // Site accent rengi
+                    outsideColor: '#00ccff'  // Site gradient rengi
+                };
+
+                const geometry = new THREE.BufferGeometry();
+                const positions = new Float32Array(parameters.count * 3);
+                const colors = new Float32Array(parameters.count * 3);
+                
+                const colorInside = new THREE.Color(parameters.insideColor);
+                const colorOutside = new THREE.Color(parameters.outsideColor);
+
+                for (let i = 0; i < parameters.count; i++) {
+                    const i3 = i * 3;
+                    const radius = Math.pow(Math.random() * parameters.randomness, Math.random() * parameters.radius);
+                    const spinAngle = radius * parameters.spin;
+                    const branchAngle = ((i % parameters.branches) / parameters.branches) * Math.PI * 2;
+
+                    const negPos = [1, -1];
+                    const randomX = Math.pow(Math.random(), parameters.randomnessPower) * negPos[Math.floor(Math.random() * negPos.length)];
+                    const randomY = Math.pow(Math.random(), parameters.randomnessPower) * negPos[Math.floor(Math.random() * negPos.length)];
+                    const randomZ = Math.pow(Math.random(), parameters.randomnessPower) * negPos[Math.floor(Math.random() * negPos.length)];
+
+                    positions[i3] = Math.cos(branchAngle + spinAngle) * radius + randomX;
+                    positions[i3 + 1] = randomY;
+                    positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius + randomZ;
+
+                    const mixedColor = colorInside.clone();
+                    mixedColor.lerp(colorOutside, Math.random() * radius / parameters.radius);
+
+                    colors[i3] = mixedColor.r;
+                    colors[i3 + 1] = mixedColor.g;
+                    colors[i3 + 2] = mixedColor.b;
+                }
+
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+                const material = new THREE.PointsMaterial({
+                    size: parameters.size,
+                    sizeAttenuation: true,
+                    depthWrite: false,
+                    blending: THREE.AdditiveBlending,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.6
+                });
+
+                this.points = new THREE.Points(geometry, material);
+                this.scene.add(this.points);
+            }
+
+            setupCamera() {
+                this.camera.position.x = 4;
+                this.camera.position.y = 3;
+                this.camera.position.z = 4;
+            }
+
+            animate() {
+                const clock = new THREE.Clock();
+                
+                const tick = () => {
+                    const elapsedTime = clock.getElapsedTime();
+                    
+                    // Scroll pozisyonunu al
+                    const scrollY = window.scrollY;
+                    const projectsSection = document.getElementById('projects');
+                    const sectionTop = projectsSection ? projectsSection.offsetTop : 0;
+                    const sectionHeight = projectsSection ? projectsSection.offsetHeight : window.innerHeight;
+                    
+                    // Scroll progress - projeler sayfasının ortasından başla
+                    const sectionMiddle = sectionTop - (sectionHeight / 1.25);
+                    const scrollStart = sectionMiddle;
+                    const scrollEnd = sectionTop + sectionHeight;
+                    const scrollProgress = Math.max(0, Math.min(1, (scrollY - scrollStart) / (scrollEnd - scrollStart)));
+                    
+                    // Galaksi döndürme - orijinal kodunuzdaki gibi
+                    if (this.points) {
+                        this.points.rotation.y = elapsedTime * 0.1 + scrollProgress * Math.PI;
+                        // Scroll ile opacity azalt (tamamen çıkması için)
+                        this.points.material.opacity = 0.6 * (1 - scrollProgress);
+                    }
+                    
+                    // Kamera hareketi - orijinal kodunuzdaki gibi
+                    this.camera.position.x = Math.cos(elapsedTime * 0.05 + scrollProgress * Math.PI);
+                    this.camera.position.z = Math.sin(elapsedTime * 0.05 + scrollProgress * Math.PI);
+                    this.camera.lookAt(0, 0, 0);
+
+                    this.renderer.render(this.scene, this.camera);
+                    requestAnimationFrame(tick);
+                };
+                
+                tick();
+            }
+
+            handleResize() {
+                window.addEventListener('resize', () => {
+                    this.camera.aspect = window.innerWidth / window.innerHeight;
+                    this.camera.updateProjectionMatrix();
+                    this.renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+            }
+        }
+
+        // Galaxy animasyonunu başlat
+        document.addEventListener('DOMContentLoaded', function() {
+            let galaxyAnimation = null;
+            
+            // Projeler bölümü görünür olduğunda galaksi animasyonunu başlat
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && entry.target.id === 'projects') {
+                        if (!galaxyAnimation) {
+                            galaxyAnimation = new GalaxyAnimation();
+                        }
+                        // Canvas'ı projeler bölümüne göre konumlandır
+                        const canvas = document.getElementById('galaxyCanvas');
+                        if (canvas) {
+                            const rect = entry.target.getBoundingClientRect();
+                            canvas.style.position = 'absolute';
+                            canvas.style.top = '0px';
+                            canvas.style.left = '0px';
+                            canvas.style.width = '100%';
+                            canvas.style.height = '100%';
+                            canvas.style.display = 'block';
+                            canvas.style.zIndex = '1';
+                        }
+                    } else if (entry.target.id === 'projects') {
+                        // Projeler bölümü görünmez olduğunda canvas'ı gizle
+                        const canvas = document.getElementById('galaxyCanvas');
+                        if (canvas) {
+                            canvas.style.display = 'none';
+                        }
+                    }
+                });
+            });
+            
+            const projectsSection = document.getElementById('projects');
+            if (projectsSection) {
+                observer.observe(projectsSection);
+            }
         });
     </script>
 
