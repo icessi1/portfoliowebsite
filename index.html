@@ -1,9 +1,42 @@
 <html lang="en" class="">
 
 <head>
+    <!-- Immediate scroll to top before anything else -->
+    <script>
+        (function() {
+            // Check if we should show loading screen
+            const hasLoadedBefore = sessionStorage.getItem('portfolioLoadingShown');
+            const perfData = performance.getEntriesByType('navigation')[0];
+            const navigationType = perfData ? perfData.type : 'navigate';
+            
+            console.log('[HEAD] Navigation type:', navigationType);
+            console.log('[HEAD] Has loaded before:', hasLoadedBefore);
+            console.log('[HEAD] Should show loading:', !(hasLoadedBefore === 'true' && navigationType !== 'reload'));
+            
+            // Only force scroll if:
+            // 1. First visit (hasLoadedBefore is null)
+            // 2. Page reload (navigationType === 'reload')
+            // NOT on back/forward navigation
+            const shouldShowLoading = !(hasLoadedBefore === 'true' && navigationType !== 'reload');
+            
+            if (shouldShowLoading) {
+                console.log('[HEAD] Forcing scroll to top');
+                if (history.scrollRestoration) {
+                    history.scrollRestoration = 'manual';
+                }
+                window.scrollTo(0, 0);
+            } else {
+                console.log('[HEAD] Keeping scroll position (back/forward navigation)');
+                // Ensure browser can restore scroll position
+                if (history.scrollRestoration) {
+                    history.scrollRestoration = 'auto';
+                }
+            }
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ömer Faruk Bulut - Frontend Developer</title>
+    <title>Ömer Faruk Bulut - Software Developer</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
         rel="stylesheet">
@@ -3432,6 +3465,70 @@
             }
         }
 
+        /* SVG Worm Loading Animation - for CV Download */
+        .svg-worm-loader {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+        }
+
+        .svg-worm-loader__ring {
+            stroke: hsla(0, 10%, 10%, 0.15);
+            transition: stroke 0.3s;
+        }
+
+        .svg-worm-loader__worm {
+            animation: wormMove 3s cubic-bezier(0.42, 0.17, 0.75, 0.83) infinite;
+        }
+
+        .svg-worm-loader.animating {
+            animation: wormBump 3s linear infinite;
+        }
+
+        /* Light theme adjustment for worm loader */
+        :root.light-theme .svg-worm-loader__ring {
+            stroke: hsla(0, 10%, 90%, 0.2);
+        }
+
+        @keyframes wormBump {
+            from, 42%, 46%, 51%, 55%, 59%, 63%, 67%, 71%, 74%, 78%, 81%, 85%, 88%, 92%, to {
+                transform: translate(0, 0);
+            }
+            44% {
+                transform: translate(1.33%, 6.75%);
+            }
+            53% {
+                transform: translate(-16.67%, -0.54%);
+            }
+            61% {
+                transform: translate(3.66%, -2.46%);
+            }
+            69% {
+                transform: translate(-0.59%, 15.27%);
+            }
+            76% {
+                transform: translate(-1.92%, -4.68%);
+            }
+            83% {
+                transform: translate(9.38%, 0.96%);
+            }
+            90% {
+                transform: translate(-4.55%, 1.98%);
+            }
+        }
+
+        @keyframes wormMove {
+            from {
+                stroke-dashoffset: 10;
+            }
+            25% {
+                stroke-dashoffset: 295;
+            }
+            to {
+                stroke-dashoffset: 1165;
+            }
+        }
+
         /* Enlarge about text by ~1.5x */
         .about-text h3 {
             font-size: 3rem;
@@ -4328,6 +4425,551 @@
             </div>
         </div>
     </div>
+
+    <!-- Loading Screen - Minimal Elegant -->
+    <div id="loading-screen" class="loading-screen">
+        <!-- Animated Background Gradient -->
+        <div class="gradient-bg"></div>
+        
+        <!-- Particle Canvas -->
+        <canvas id="particles-canvas" class="particles-canvas"></canvas>
+        
+        <!-- Main Content -->
+        <div class="loading-content-wrapper">
+            <!-- Large Initial Icon -->
+            <div class="big-letter-container">
+                <img src="iconnnn.png" alt="Logo" class="big-letter" id="big-letter">
+                <div class="letter-glow"></div>
+            </div>
+            
+            <!-- Name Reveal -->
+            <div class="name-container" id="name-container">
+                <h1 class="loading-name">ÖMER FARUK BULUT</h1>
+            </div>
+            
+            <!-- Subtitle -->
+            <div class="loading-subtitle" id="loading-subtitle">
+                <span class="subtitle-line"></span>
+                <span class="subtitle-text">Software Developer</span>
+                <span class="subtitle-line"></span>
+            </div>
+            
+            <!-- Circular Progress -->
+            <div class="circular-progress-container" id="circular-progress">
+                <svg class="circular-progress" viewBox="0 0 120 120">
+                    <circle class="progress-bg" cx="60" cy="60" r="54"></circle>
+                    <circle class="progress-circle" cx="60" cy="60" r="54" id="progress-circle"></circle>
+                </svg>
+                <div class="progress-text" id="progress-text">0%</div>
+            </div>
+            
+            <!-- Loading Text -->
+            <div class="loading-status" id="loading-status">
+                <span class="status-dot"></span>
+                <span class="status-text">Initializing Experience</span>
+            </div>
+        </div>
+        
+        <!-- Decorative Elements -->
+        <div class="corner-decoration corner-tl"></div>
+        <div class="corner-decoration corner-tr"></div>
+        <div class="corner-decoration corner-bl"></div>
+        <div class="corner-decoration corner-br"></div>
+    </div>
+
+    <style>
+        /* Loading Screen - Minimal Elegant Theme */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999999;
+            overflow: hidden;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        .loading-screen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* Animated Background */
+        .gradient-bg {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center,
+                rgba(0, 255, 136, 0.03) 0%,
+                transparent 50%);
+            animation: gradientRotate 20s linear infinite;
+        }
+
+        @keyframes gradientRotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Particle Canvas */
+        .particles-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.6;
+        }
+
+        /* Main Content Wrapper */
+        .loading-content-wrapper {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            padding-top: 10vh;
+        }
+
+        /* Big Icon Animation */
+        .big-letter-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .big-letter {
+            width: 280px;
+            height: 280px;
+            opacity: 0;
+            transform: scale(0) rotate(-180deg);
+            animation: iconEntrance 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            filter: drop-shadow(0 0 40px var(--accent)) drop-shadow(0 0 80px var(--accent));
+            position: relative;
+            z-index: 2;
+            border-radius: 20px;
+            object-fit: contain;
+            padding: 20px;
+        }
+        
+        /* Dark theme'de siyah icon biraz daha küçük göster (beyaz ile eşitle) */
+        :root:not(.light-theme) .big-letter {
+            padding: 35px;
+        }
+
+        @keyframes iconEntrance {
+            0% {
+                opacity: 0;
+                transform: scale(0) rotate(-180deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .letter-glow {
+            position: absolute;
+            width: 360px;
+            height: 360px;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+            opacity: 0.3;
+            filter: blur(60px);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(0.8);
+                opacity: 0.2;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.4;
+            }
+        }
+
+        /* Name Container */
+        .name-container {
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 0.8s;
+        }
+
+        .loading-name {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 8px;
+            background: linear-gradient(135deg, var(--accent) 0%, #00ccff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'Orbitron', sans-serif;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Subtitle */
+        .loading-subtitle {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 1.2s;
+        }
+
+        .subtitle-line {
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+
+        .subtitle-text {
+            font-size: 14px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        /* Circular Progress */
+        .circular-progress-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 1.5s;
+        }
+
+        .circular-progress {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .progress-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.05);
+            stroke-width: 3;
+        }
+
+        .progress-circle {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-dasharray: 339.292;
+            stroke-dashoffset: 339.292;
+            transition: stroke-dashoffset 0.3s ease;
+            filter: drop-shadow(0 0 8px var(--accent));
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent);
+        }
+
+        /* Loading Status */
+        .loading-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 1.8s;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: dotPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.3);
+                opacity: 0.6;
+            }
+        }
+
+        .status-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+        }
+
+        /* Corner Decorations */
+        .corner-decoration {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border: 2px solid var(--accent);
+            opacity: 0.2;
+            animation: cornerFade 3s ease-in-out infinite;
+        }
+
+        .corner-tl {
+            top: 40px;
+            left: 40px;
+            border-right: none;
+            border-bottom: none;
+            animation-delay: 0s;
+        }
+
+        .corner-tr {
+            top: 40px;
+            right: 40px;
+            border-left: none;
+            border-bottom: none;
+            animation-delay: 0.75s;
+        }
+
+        .corner-bl {
+            bottom: 40px;
+            left: 40px;
+            border-right: none;
+            border-top: none;
+            animation-delay: 1.5s;
+        }
+
+        .corner-br {
+            bottom: 40px;
+            right: 40px;
+            border-left: none;
+            border-top: none;
+            animation-delay: 2.25s;
+        }
+
+        @keyframes cornerFade {
+            0%, 100% {
+                opacity: 0.1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.3;
+                transform: scale(1.05);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .loading-content-wrapper {
+                padding-top: 15vh;
+            }
+
+            .big-letter-container {
+                width: 300px;
+                height: 300px;
+            }
+
+            .big-letter {
+                width: 220px;
+                height: 220px;
+                padding: 15px;
+            }
+            
+            :root:not(.light-theme) .big-letter {
+                padding: 27px;
+            }
+
+            .letter-glow {
+                width: 280px;
+                height: 280px;
+            }
+
+            .loading-name {
+                font-size: 24px;
+                letter-spacing: 5px;
+            }
+
+            .subtitle-text {
+                font-size: 12px;
+                letter-spacing: 2px;
+            }
+
+            .subtitle-line {
+                width: 40px;
+            }
+
+            .circular-progress-container {
+                width: 100px;
+                height: 100px;
+            }
+
+            .progress-text {
+                font-size: 18px;
+            }
+
+            .corner-decoration {
+                width: 50px;
+                height: 50px;
+            }
+
+            .corner-tl, .corner-tr {
+                top: 20px;
+            }
+
+            .corner-bl, .corner-br {
+                bottom: 20px;
+            }
+
+            .corner-tl, .corner-bl {
+                left: 20px;
+            }
+
+            .corner-tr, .corner-br {
+                right: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .loading-content-wrapper {
+                padding-top: 20vh;
+            }
+
+            .big-letter-container {
+                width: 240px;
+                height: 240px;
+            }
+
+            .big-letter {
+                width: 180px;
+                height: 180px;
+                padding: 12px;
+            }
+            
+            :root:not(.light-theme) .big-letter {
+                padding: 22px;
+            }
+
+            .letter-glow {
+                width: 220px;
+                height: 220px;
+            }
+
+            .loading-name {
+                font-size: 18px;
+                letter-spacing: 3px;
+            }
+
+            .subtitle-text {
+                font-size: 10px;
+            }
+
+            .subtitle-line {
+                width: 30px;
+            }
+        }
+
+        /* Light Theme - Enhanced */
+        :root.light-theme .loading-screen {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f4f8 50%, #ffffff 100%);
+        }
+
+        :root.light-theme .gradient-bg {
+            background: radial-gradient(circle at center,
+                rgba(0, 102, 204, 0.08) 0%,
+                transparent 50%);
+        }
+
+        :root.light-theme .progress-circle {
+            stroke: #0066cc;
+            filter: drop-shadow(0 0 10px rgba(0, 102, 204, 0.4));
+        }
+
+        :root.light-theme .progress-bg {
+            stroke: rgba(0, 102, 204, 0.1);
+        }
+
+        :root.light-theme .big-letter {
+            filter: drop-shadow(0 0 30px rgba(0, 102, 204, 0.4)) drop-shadow(0 0 60px rgba(0, 102, 204, 0.2));
+            padding: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            :root.light-theme .big-letter {
+                padding: 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            :root.light-theme .big-letter {
+                padding: 12px;
+            }
+        }
+
+        :root.light-theme .loading-name {
+            background: linear-gradient(135deg, #0066cc 0%, #0080ff 50%, #00a8cc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        :root.light-theme .subtitle-line {
+            background: linear-gradient(90deg, transparent, #0066cc, transparent);
+        }
+
+        :root.light-theme .subtitle-text {
+            color: #6c757d;
+        }
+
+        :root.light-theme .progress-text {
+            color: #0066cc;
+            font-weight: 800;
+        }
+
+        :root.light-theme .status-dot {
+            background: #0066cc;
+            box-shadow: 0 0 8px rgba(0, 102, 204, 0.6);
+        }
+
+        :root.light-theme .status-text {
+            color: #6c757d;
+        }
+
+        :root.light-theme .corner-decoration {
+            border-color: #0066cc;
+            opacity: 0.3;
+        }
+
+        :root.light-theme .letter-glow {
+            background: radial-gradient(circle, rgba(0, 102, 204, 0.3) 0%, transparent 70%);
+        }
+    </style>
 
     <!-- Custom Cursor -->
     <div class="cursor"
@@ -5305,11 +5947,11 @@
                 projects: "Projects",
                 contact: "Contact",
                 heroTitle: "Ömer Faruk Bulut",
-                heroSubtitle: "Frontend Developer & Full-Stack Developer",
+                heroSubtitle: "Software Developer & Full-Stack Developer",
                 btnWork: "View My Work",
                 btnContact: "Get In Touch",
                 aboutTitle: "About Me",
-                aboutHeading: "Passionate Frontend Developer",
+                aboutHeading: "Passionate Software Developer",
                 skillsTitle: "Skills & Technologies",
                 projectsTitle: "Featured Projects",
                 contactTitle: "Get In Touch",
@@ -6923,7 +7565,7 @@ Kod yazmadığım zamanlarda beni yeni teknolojiler keşfederken bulabilirsiniz,
 
             // Texts to rotate
             const texts = [
-                'Frontend Developer',
+                'Software Developer',
                 'Full Stack Developer',
                 'Web Developer',
                 'Data Scientist',
@@ -7063,19 +7705,73 @@ Kod yazmadığım zamanlarda beni yeni teknolojiler keşfederken bulabilirsiniz,
                 btn.style.left = '50%';
                 btn.style.transform = 'translateX(-50%)';
                 btn.blur();
-                // custom loading toast (top-right) with spinner
+                // custom loading toast (top-right) with SVG worm animation
                 const note = document.createElement('div');
-                note.style.cssText = 'position:fixed;top:20px;right:20px;display:flex;align-items:center;gap:10px;background:var(--gradient);color:var(--bg-primary);padding:0.75rem 1rem;border-radius:12px;font-weight:600;z-index:10000;box-shadow:0 10px 30px rgba(0,0,0,0.25)';
-                const spinner = document.createElement('div');
-                spinner.style.cssText = 'width:16px;height:16px;border:2px solid rgba(0,0,0,0.2);border-top-color:var(--bg-primary);border-radius:50%;animation:spin360 .8s linear infinite';
+                note.style.cssText = 'position:fixed;top:20px;right:20px;display:flex;align-items:center;gap:12px;background:var(--gradient);color:var(--bg-primary);padding:0.75rem 1.25rem;border-radius:12px;font-weight:600;z-index:10000;box-shadow:0 10px 30px rgba(0,0,0,0.25)';
+                
+                // Create SVG worm loader
+                const svgNS = "http://www.w3.org/2000/svg";
+                const svg = document.createElementNS(svgNS, 'svg');
+                svg.setAttribute('class', 'svg-worm-loader animating');
+                svg.setAttribute('viewBox', '0 0 128 128');
+                svg.setAttribute('width', '32px');
+                svg.setAttribute('height', '32px');
+                
+                // Create gradient
+                const defs = document.createElementNS(svgNS, 'defs');
+                const gradient = document.createElementNS(svgNS, 'linearGradient');
+                gradient.setAttribute('id', 'worm-grad');
+                gradient.setAttribute('x1', '0');
+                gradient.setAttribute('y1', '0');
+                gradient.setAttribute('x2', '0');
+                gradient.setAttribute('y2', '1');
+                
+                const stop1 = document.createElementNS(svgNS, 'stop');
+                stop1.setAttribute('offset', '0%');
+                stop1.setAttribute('stop-color', 'rgba(255, 255, 255, 0.9)');
+                
+                const stop2 = document.createElementNS(svgNS, 'stop');
+                stop2.setAttribute('offset', '100%');
+                stop2.setAttribute('stop-color', 'rgba(255, 255, 255, 0.7)');
+                
+                gradient.appendChild(stop1);
+                gradient.appendChild(stop2);
+                defs.appendChild(gradient);
+                svg.appendChild(defs);
+                
+                // Create circle ring
+                const circle = document.createElementNS(svgNS, 'circle');
+                circle.setAttribute('class', 'svg-worm-loader__ring');
+                circle.setAttribute('r', '56');
+                circle.setAttribute('cx', '64');
+                circle.setAttribute('cy', '64');
+                circle.setAttribute('fill', 'none');
+                circle.setAttribute('stroke', 'rgba(255, 255, 255, 0.2)');
+                circle.setAttribute('stroke-width', '16');
+                circle.setAttribute('stroke-linecap', 'round');
+                svg.appendChild(circle);
+                
+                // Create worm path
+                const path = document.createElementNS(svgNS, 'path');
+                path.setAttribute('class', 'svg-worm-loader__worm');
+                path.setAttribute('d', 'M92,15.492S78.194,4.967,66.743,16.887c-17.231,17.938-28.26,96.974-28.26,96.974L119.85,59.892l-99-31.588,57.528,89.832L97.8,19.349,13.636,88.51l89.012,16.015S81.908,38.332,66.1,22.337C50.114,6.156,36,15.492,36,15.492a56,56,0,1,0,56,0Z');
+                path.setAttribute('fill', 'none');
+                path.setAttribute('stroke', 'url(#worm-grad)');
+                path.setAttribute('stroke-width', '16');
+                path.setAttribute('stroke-linecap', 'round');
+                path.setAttribute('stroke-linejoin', 'round');
+                path.setAttribute('stroke-dasharray', '44 1111');
+                path.setAttribute('stroke-dashoffset', '10');
+                svg.appendChild(path);
+                
                 const text = document.createElement('span');
                 text.textContent = 'Yükleniyor...';
-                note.appendChild(spinner);
+                note.appendChild(svg);
                 note.appendChild(text);
                 document.body.appendChild(note);
-                setTimeout(() => note.remove(), 2000);
+                setTimeout(() => note.remove(), 3000);
 
-                // start download after 2s
+                // start download after 3s
                 setTimeout(() => {
                     const a = document.createElement('a');
                     const fileName = 'CV-TR.pdf';
@@ -7084,7 +7780,7 @@ Kod yazmadığım zamanlarda beni yeni teknolojiler keşfederken bulabilirsiniz,
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
-                }, 2000);
+                }, 2500);
             });
 
             // keep centered while holding mouse
@@ -7624,6 +8320,288 @@ Kod yazmadığım zamanlarda beni yeni teknolojiler keşfederken bulabilirsiniz,
         });
     </script>
 
+    <!-- Loading Screen Script - Minimal Elegant -->
+    <script>
+        (function() {
+            // Elements
+            const loadingScreen = document.getElementById('loading-screen');
+            const particlesCanvas = document.getElementById('particles-canvas');
+            const progressCircle = document.getElementById('progress-circle');
+            const progressText = document.getElementById('progress-text');
+            const statusText = document.querySelector('.status-text');
+            
+            if (!loadingScreen) {
+                console.error('Loading screen element not found!');
+                return;
+            }
+            
+            // Check if page was already loaded in this session
+            const hasLoadedBefore = sessionStorage.getItem('portfolioLoadingShown');
+            
+            // Get navigation type
+            const perfEntries = performance.getEntriesByType('navigation');
+            const navigationType = perfEntries.length > 0 ? perfEntries[0].type : 'navigate';
+            
+            console.log('Navigation type:', navigationType);
+            console.log('Has loaded before:', hasLoadedBefore);
+            
+            // Only show loading on first visit or page reload, NOT on back/forward navigation
+            if (hasLoadedBefore === 'true' && navigationType !== 'reload') {
+                console.log('Hiding loading screen - already shown in this session');
+                loadingScreen.style.display = 'none';
+                // Don't touch overflow - let scroll work normally
+                return;
+            }
+            
+            // Hide body scrollbar while loading (only if loading will be shown)
+            document.body.style.overflow = 'hidden';
+            
+            console.log('Loading screen initialized!');
+            
+            // Particle Animation
+            function initParticles() {
+                if (!particlesCanvas) return;
+                
+                const ctx = particlesCanvas.getContext('2d');
+                particlesCanvas.width = window.innerWidth;
+                particlesCanvas.height = window.innerHeight;
+                
+                const particles = [];
+                const particleCount = 80;
+                
+                // Get accent color based on current theme
+                function getAccentColor() {
+                    return getComputedStyle(document.documentElement)
+                        .getPropertyValue('--accent').trim() || '#00ff88';
+                }
+                
+                let accentColor = getAccentColor();
+                
+                // Create particles
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push({
+                        x: Math.random() * particlesCanvas.width,
+                        y: Math.random() * particlesCanvas.height,
+                        vx: (Math.random() - 0.5) * 0.5,
+                        vy: (Math.random() - 0.5) * 0.5,
+                        radius: Math.random() * 2 + 1
+                    });
+                }
+                
+                // Animation
+                function animate() {
+                    ctx.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
+                    
+                    // Update accent color (in case theme changes)
+                    accentColor = getAccentColor();
+                    
+                    // Update and draw particles
+                    particles.forEach(particle => {
+                        particle.x += particle.vx;
+                        particle.y += particle.vy;
+                        
+                        // Wrap around edges
+                        if (particle.x < 0) particle.x = particlesCanvas.width;
+                        if (particle.x > particlesCanvas.width) particle.x = 0;
+                        if (particle.y < 0) particle.y = particlesCanvas.height;
+                        if (particle.y > particlesCanvas.height) particle.y = 0;
+                        
+                        // Draw particle
+                        ctx.beginPath();
+                        ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = accentColor;
+                        ctx.globalAlpha = 0.5;
+                        ctx.fill();
+                    });
+                    
+                    // Draw connections
+                    ctx.globalAlpha = 0.15;
+                    particles.forEach((p1, i) => {
+                        particles.slice(i + 1).forEach(p2 => {
+                            const dx = p1.x - p2.x;
+                            const dy = p1.y - p2.y;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            
+                            if (distance < 120) {
+                                ctx.beginPath();
+                                ctx.moveTo(p1.x, p1.y);
+                                ctx.lineTo(p2.x, p2.y);
+                                ctx.strokeStyle = accentColor;
+                                ctx.lineWidth = 0.5;
+                                ctx.stroke();
+                            }
+                        });
+                    });
+                    
+                    ctx.globalAlpha = 1;
+                    requestAnimationFrame(animate);
+                }
+                
+                animate();
+            }
+            
+            // Progress tracking
+            let progress = 0;
+            const circleCircumference = 339.292;
+            
+            function updateProgress(value) {
+                progress = Math.min(value, 100);
+                
+                // Update circle
+                if (progressCircle) {
+                    const offset = circleCircumference - (circleCircumference * progress / 100);
+                    progressCircle.style.strokeDashoffset = offset;
+                }
+                
+                // Update text
+                if (progressText) {
+                    progressText.textContent = Math.round(progress) + '%';
+                }
+            }
+            
+            // Loading messages
+            const loadingMessages = [
+                'Initializing Experience',
+                'Loading Components',
+                'Building Interface',
+                'Optimizing Performance',
+                'Almost Ready',
+                'Finalizing'
+            ];
+            
+            let messageIndex = 0;
+            
+            function updateMessage() {
+                if (statusText && messageIndex < loadingMessages.length) {
+                    statusText.textContent = loadingMessages[messageIndex];
+                    messageIndex++;
+                }
+            }
+            
+            // Simulate progress
+            let progressInterval;
+            
+            function startProgress() {
+                progressInterval = setInterval(() => {
+                    if (progress < 90) {
+                        const increment = Math.random() * 5 + 2;
+                        updateProgress(progress + increment);
+                        
+                        // Update message at certain milestones
+                        if (progress > 20 && messageIndex === 1) updateMessage();
+                        if (progress > 40 && messageIndex === 2) updateMessage();
+                        if (progress > 60 && messageIndex === 3) updateMessage();
+                        if (progress > 80 && messageIndex === 4) updateMessage();
+                    }
+                }, 200);
+            }
+            
+            // Complete loading
+            function completeLoading() {
+                clearInterval(progressInterval);
+                updateProgress(100);
+                
+                if (statusText) {
+                    statusText.textContent = loadingMessages[loadingMessages.length - 1];
+                }
+                
+                console.log('Loading complete!');
+                
+                setTimeout(() => {
+                    if (loadingScreen) {
+                        loadingScreen.classList.add('fade-out');
+                        
+                        // Mark as shown in this session
+                        sessionStorage.setItem('portfolioLoadingShown', 'true');
+                        console.log('Session marked - loading will not show again until page reload or new session');
+                        
+                        setTimeout(() => {
+                            if (loadingScreen && loadingScreen.parentNode) {
+                                loadingScreen.parentNode.removeChild(loadingScreen);
+                            }
+                            
+                            // Restore body scrollbar
+                            document.body.style.overflow = '';
+                            
+                            console.log('Loading screen removed from DOM');
+                        }, 1000);
+                    }
+                }, 500);
+            }
+            
+            // Initialize
+            initParticles();
+            
+            // Update icon based on theme
+            function updateLogoIcon() {
+                const logoImg = document.getElementById('big-letter');
+                if (logoImg) {
+                    const isLightTheme = document.documentElement.classList.contains('light-theme');
+                    // Light theme'de beyaz icon, Dark theme'de siyah icon
+                    logoImg.src = isLightTheme ? 'iconbeyaz.png' : 'iconnnn.png';
+                }
+            }
+            
+            // Set initial icon
+            updateLogoIcon();
+            
+            // Watch for theme changes
+            const observer = new MutationObserver(updateLogoIcon);
+            observer.observe(document.documentElement, {
+                attributes: true,
+                attributeFilter: ['class']
+            });
+            
+            // Start progress after animations settle
+            setTimeout(() => {
+                startProgress();
+            }, 2000);
+            
+            // Handle page load
+            let isPageLoaded = false;
+            
+            function handlePageLoad() {
+                if (isPageLoaded) return;
+                isPageLoaded = true;
+                
+                // Minimum display time
+                const minLoadTime = 3500;
+                const startTime = Date.now();
+                
+                const checkComplete = setInterval(() => {
+                    const elapsed = Date.now() - startTime;
+                    
+                    if (elapsed >= minLoadTime && progress >= 85) {
+                        clearInterval(checkComplete);
+                        completeLoading();
+                    } else if (elapsed >= minLoadTime) {
+                        updateProgress(Math.min(progress + 10, 95));
+                    }
+                }, 100);
+            }
+            
+            if (document.readyState === 'complete') {
+                handlePageLoad();
+            } else {
+                window.addEventListener('load', handlePageLoad);
+            }
+            
+            // Fallback
+            setTimeout(() => {
+                if (!isPageLoaded) {
+                    handlePageLoad();
+                }
+            }, 7000);
+            
+            // Resize handler
+            window.addEventListener('resize', () => {
+                if (particlesCanvas) {
+                    particlesCanvas.width = window.innerWidth;
+                    particlesCanvas.height = window.innerHeight;
+                }
+            });
+        })();
+    </script>
 
 </body>
 
