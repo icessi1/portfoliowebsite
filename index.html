@@ -35,8 +35,55 @@
         })();
     </script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ömer Faruk Bulut - Software Developer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Primary Meta Tags -->
+    <title>Ömer Faruk Bulut - Frontend & Full-Stack Developer | Modern Web Solutions</title>
+    <meta name="title" content="Ömer Faruk Bulut - Frontend & Full-Stack Developer">
+    <meta name="description" content="Experienced Frontend and Full-Stack Developer specializing in React, Vue.js, Node.js. Creating modern, responsive, and high-performance web applications with cutting-edge technologies.">
+    <meta name="keywords" content="frontend developer, full-stack developer, web developer, React developer, Vue.js, Node.js, JavaScript, TypeScript, web design, UI/UX, Ömer Faruk Bulut, portfolio, yazılım geliştirici">
+    <meta name="author" content="Ömer Faruk Bulut">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://icess11.github.io/portfoliowebsite/">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://icess11.github.io/portfoliowebsite/">
+    <meta property="og:title" content="Ömer Faruk Bulut - Frontend & Full-Stack Developer">
+    <meta property="og:description" content="Experienced Frontend and Full-Stack Developer specializing in React, Vue.js, Node.js. Creating modern, responsive, and high-performance web applications.">
+    <meta property="og:image" content="https://icess11.github.io/portfoliowebsite/iconbeyazb1.png">
+    <meta property="og:site_name" content="Ömer Faruk Bulut Portfolio">
+    <meta property="og:locale" content="tr_TR">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://icess11.github.io/portfoliowebsite/">
+    <meta property="twitter:title" content="Ömer Faruk Bulut - Frontend & Full-Stack Developer">
+    <meta property="twitter:description" content="Experienced Frontend and Full-Stack Developer specializing in React, Vue.js, Node.js.">
+    <meta property="twitter:image" content="https://icess11.github.io/portfoliowebsite/iconbeyazb1.png">
+    
+    <!-- Favicon (High Resolution - Multiple Sizes) -->
+    <link rel="icon" type="image/png" sizes="32x32" href="iconnnns1.png" id="favicon-32">
+    <link rel="icon" type="image/png" sizes="64x64" href="iconnnns1.png" id="favicon-64">
+    <link rel="icon" type="image/png" sizes="96x96" href="iconnnns1.png" id="favicon-96">
+    <link rel="icon" type="image/png" sizes="128x128" href="iconnnns1.png" id="favicon-128">
+    <link rel="apple-touch-icon" sizes="180x180" href="iconnnns1.png" id="favicon-apple">
+    <meta name="theme-color" content="#00ff88" id="theme-color-meta">
+    <meta name="msapplication-TileColor" content="#00ff88">
+    <meta name="msapplication-TileImage" content="iconnnns1.png" id="favicon-tile">
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TPPELTRCJV"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-TPPELTRCJV');
+    </script>
+    
+    <!-- Fonts -->
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
         rel="stylesheet">
@@ -53,6 +100,23 @@
     <!-- Three.js for Galaxy Animation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
+    <!-- EmailJS - For email notifications -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function(){
+            // Replace with your EmailJS public key
+            emailjs.init("YuyFE2BuIvX52hoMh"); // Get from: https://dashboard.emailjs.com/admin/account
+        })();
+    </script>
+    
+    <!-- Webhook Configuration for SMS/WhatsApp via Zapier/Make -->
+    <script>
+        // Webhook URLs (will be set from Zapier/Make)
+        const CONTACT_WEBHOOK_URL = "https://hooks.zapier.com/hooks/catch/25136603/uius085/"; // For contact form
+        const MEETING_WEBHOOK_URL = "https://hooks.zapier.com/hooks/catch/25136603/uiulzkl/"; // For meeting form (ayrı Zap oluşturunca değiştir)
+    </script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400');
 
@@ -91,10 +155,13 @@
 
         html {
             height: 100%;
+            height: -webkit-fill-available;
             position: relative;
         }
 
         body {
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-primary);
             color: var(--text-primary);
@@ -3989,7 +4056,7 @@
 
             @keyframes expandCardMobile {
                 from {
-                    height: 75px;
+                height: 75px;
                     min-height: 75px;
                 }
                 to {
@@ -4484,7 +4551,11 @@
             top: 0;
             left: 0;
             width: 100%;
+            width: 100vw;
             height: 100%;
+            height: 100vh;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
             background: var(--bg-primary);
             display: flex;
             justify-content: center;
@@ -4492,6 +4563,11 @@
             z-index: 999999;
             overflow: hidden;
             transition: opacity 1s ease, visibility 1s ease;
+            /* iOS safe area için padding */
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
         }
 
         .loading-screen.fade-out {
@@ -4528,6 +4604,8 @@
             left: 0;
             width: 100%;
             height: 100%;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
             opacity: 0.6;
         }
 
@@ -4788,77 +4866,144 @@
         /* Responsive */
         @media (max-width: 768px) {
             .loading-content-wrapper {
-                padding-top: 15vh;
+                padding-top: 10vh;
+                max-width: 90vw;
             }
 
             .big-letter-container {
-                width: 300px;
-                height: 300px;
-            }
-
-            .big-letter {
-                width: 220px;
-                height: 220px;
-                padding: 15px;
-            }
-            
-            :root:not(.light-theme) .big-letter {
-                padding: 27px;
-            }
-
-            .letter-glow {
                 width: 280px;
                 height: 280px;
             }
 
+            .big-letter {
+                width: 200px;
+                height: 200px;
+                padding: 15px;
+            }
+            
+            :root:not(.light-theme) .big-letter {
+                padding: 25px;
+            }
+
+            .letter-glow {
+                width: 260px;
+                height: 260px;
+            }
+
             .loading-name {
-                font-size: 24px;
-                letter-spacing: 5px;
+                font-size: 22px;
+                letter-spacing: 4px;
             }
 
             .subtitle-text {
-                font-size: 12px;
+                font-size: 11px;
                 letter-spacing: 2px;
             }
 
             .subtitle-line {
-                width: 40px;
+                width: 35px;
             }
 
             .circular-progress-container {
                 width: 100px;
                 height: 100px;
+                margin-top: 20px;
             }
 
             .progress-text {
                 font-size: 18px;
             }
 
+            .loading-status {
+                font-size: 13px;
+            }
+
+            .status-text {
+                font-size: 13px;
+            }
+
             .corner-decoration {
-                width: 50px;
-                height: 50px;
+                width: 40px;
+                height: 40px;
             }
 
             .corner-tl, .corner-tr {
-                top: 20px;
+                top: max(20px, env(safe-area-inset-top));
             }
 
             .corner-bl, .corner-br {
-                bottom: 20px;
+                bottom: max(20px, env(safe-area-inset-bottom));
             }
 
             .corner-tl, .corner-bl {
-                left: 20px;
+                left: max(20px, env(safe-area-inset-left));
             }
 
             .corner-tr, .corner-br {
-                right: 20px;
+                right: max(20px, env(safe-area-inset-right));
+            }
+        }
+
+        /* iPhone 13 ve benzeri cihazlar için özel ayarlamalar */
+        @media (max-width: 430px) and (min-width: 375px) {
+            .loading-content-wrapper {
+                padding-top: 12vh;
+                max-width: 85vw;
+            }
+
+            .big-letter-container {
+                width: 260px;
+                height: 260px;
+            }
+
+            .big-letter {
+                width: 190px;
+                height: 190px;
+                padding: 13px;
+            }
+            
+            :root:not(.light-theme) .big-letter {
+                padding: 23px;
+            }
+
+            .letter-glow {
+                width: 240px;
+                height: 240px;
+            }
+
+            .loading-name {
+                font-size: 20px;
+                letter-spacing: 3.5px;
+            }
+
+            .subtitle-text {
+                font-size: 10px;
+                letter-spacing: 1.8px;
+            }
+
+            .circular-progress-container {
+                width: 95px;
+                height: 95px;
+                margin-top: 18px;
+            }
+
+            .progress-text {
+                font-size: 17px;
+            }
+
+            .loading-status {
+                font-size: 12px;
+            }
+
+            .status-text {
+                font-size: 12px;
             }
         }
 
         @media (max-width: 480px) {
             .loading-content-wrapper {
-                padding-top: 20vh;
+                padding-top: 15vh;
+                max-width: 85vw;
             }
 
             .big-letter-container {
@@ -4892,6 +5037,45 @@
 
             .subtitle-line {
                 width: 30px;
+            }
+
+            .circular-progress-container {
+                width: 90px;
+                height: 90px;
+                margin-top: 15px;
+            }
+
+            .progress-text {
+                font-size: 16px;
+            }
+
+            .loading-status {
+                font-size: 11px;
+            }
+
+            .status-text {
+                font-size: 11px;
+            }
+
+            .corner-decoration {
+                width: 35px;
+                height: 35px;
+            }
+
+            .corner-tl, .corner-tr {
+                top: max(15px, env(safe-area-inset-top));
+            }
+
+            .corner-bl, .corner-br {
+                bottom: max(15px, env(safe-area-inset-bottom));
+            }
+
+            .corner-tl, .corner-bl {
+                left: max(15px, env(safe-area-inset-left));
+            }
+
+            .corner-tr, .corner-br {
+                right: max(15px, env(safe-area-inset-right));
             }
         }
 
@@ -5033,7 +5217,7 @@
             </div>
 
             <!-- Language Switcher -->
-            <div class="lang-switcher" id="langSwitcher">
+            <div class="lang-switcher" id="langSwitcher" role="button" tabindex="0" aria-label="Switch language between Turkish and English">
                 <div class="lang-text">
                     <span class="lang-part lang-top" id="langTop">Türkçe</span>
                     <span class="lang-part lang-middle" id="langMiddle">English</span>
@@ -5041,20 +5225,26 @@
             </div>
 
             <!-- Theme Toggle -->
-            <div class="theme-toggle">
-                <span class="theme-label">Dark</span>
+            <div class="theme-toggle" role="group" aria-label="Theme switcher">
+                <span class="theme-label" id="darkLabel">Dark</span>
                 <label class="theme-switch">
-                    <input type="checkbox" id="themeToggle">
+                    <input 
+                        type="checkbox" 
+                        id="themeToggle" 
+                        role="switch" 
+                        aria-checked="false" 
+                        aria-labelledby="darkLabel lightLabel"
+                        aria-label="Toggle between dark and light theme">
                     <span class="slider"></span>
                 </label>
-                <span class="theme-label">Light</span>
+                <span class="theme-label" id="lightLabel">Light</span>
             </div>
         </div>
     </nav>
 
-    <div class="logo">
+    <div class="logo" role="banner">
         <div class="logo-icon">
-            <img src="iconnnn.png" alt="ÖFB Logo">
+            <img src="iconnnns1.png" alt="Ömer Faruk Bulut - Developer Logo" width="50" height="50">
         </div>
     </div>
 
@@ -5088,7 +5278,7 @@
     </div>
 
     <!-- Hero Section -->
-    <section class="hero" id="home"
+    <section class="hero" id="home" role="main" aria-label="Home section"
         style="opacity: 1; transform: translateY(0px); transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1);">
         <!-- SmokeyBackground Canvas -->
         <div id="smokey-background-container" class="smokey-background"><canvas class="smokey-canvas" width="1303"
@@ -5368,7 +5558,7 @@
         
         <div style="padding: 0 0 5rem 0; text-align: center; position: relative; z-index: 20; order: 1;">
             <h2 style="font-size: 3rem; font-weight: 700; color: var(--text-primary); margin: 0;" data-i18n="projectsTitle">Öne Çıkan Projeler</h2>
-        </div>
+                            </div>
         
         <!-- Flowing Menu Projects -->
         <div class="menu-wrap" style="position: relative; z-index: 20;">
@@ -5391,51 +5581,51 @@
                 <div class="dual-form-container" id="dualFormContainer">
                     <!-- Contact Form -->
                     <div class="form-container contact-form-container">
-                        <form class="form" id="contactForm">
-                            <h1 data-i18n="contactTitle">İletişime Geç</h1>
-                            <input type="text" id="contactName" placeholder="Adınız" required="">
-                            <input type="email" id="contactEmail" placeholder="E-posta" required="">
-                            <textarea id="contactMessage" placeholder="Mesajınız" required=""></textarea>
-                            <button type="submit" data-i18n="btnSubmit">Mesaj Gönder</button>
+                        <form class="form" id="contactForm" aria-labelledby="contactFormTitle">
+                            <h1 id="contactFormTitle" data-i18n="contactTitle">İletişime Geç</h1>
+                            <input type="text" id="contactName" name="name" placeholder="Adınız" required aria-required="true" aria-label="Your name">
+                            <input type="email" id="contactEmail" name="email" placeholder="E-posta" required aria-required="true" aria-label="Your email address">
+                            <textarea id="contactMessage" name="message" placeholder="Mesajınız" required aria-required="true" aria-label="Your message" rows="5"></textarea>
+                            <button type="submit" data-i18n="btnSubmit" aria-label="Send contact message">Mesaj Gönder</button>
                         </form>
                     </div>
 
                     <!-- Meeting Form -->
                     <div class="form-container meeting-form-container">
-                        <form class="form" id="meetingForm">
-                            <h2 data-i18n="meetingTitle">Tanışma Görüşmesi Planla</h2>
+                        <form class="form" id="meetingForm" aria-labelledby="meetingFormTitle">
+                            <h2 id="meetingFormTitle" data-i18n="meetingTitle">Tanışma Görüşmesi Planla</h2>
                             <p class="sub" data-i18n="meetingSub">Projenizi konuşalım</p>
                             <div class="form-input-wrapper">
-                                <div class="left-light"></div>
-                                <input type="text" id="meetingName" placeholder="Adınız" required="">
+                                <div class="left-light" aria-hidden="true"></div>
+                                <input type="text" id="meetingName" name="name" placeholder="Adınız" required aria-required="true" aria-label="Your name for meeting">
                             </div>
                             <div class="form-input-wrapper">
-                                <div class="left-light"></div>
-                                <input type="email" id="meetingEmail" placeholder="E-posta" required="">
+                                <div class="left-light" aria-hidden="true"></div>
+                                <input type="email" id="meetingEmail" name="email" placeholder="E-posta" required aria-required="true" aria-label="Your email address for meeting">
                             </div>
                             <div class="form-input-wrapper">
-                                <div class="left-light"></div>
+                                <div class="left-light" aria-hidden="true"></div>
                                 <div class="calendar-picker">
                                     <input type="text" id="meetingDateTime" placeholder="Tarih ve saat seçin" readonly
-                                        class="calendar-input" required="">
-                                    <div class="calendar-dropdown" id="calendarDropdown">
+                                        class="calendar-input" required aria-required="true" aria-label="Select meeting date and time">
+                                    <div class="calendar-dropdown" id="calendarDropdown" role="dialog" aria-label="Date and time picker">
                                         <div class="calendar-header">
-                                            <button type="button" class="calendar-nav" id="prevMonth">‹</button>
-                                            <div class="calendar-month-year" id="monthYear"></div>
-                                            <button type="button" class="calendar-nav" id="nextMonth">›</button>
+                                            <button type="button" class="calendar-nav" id="prevMonth" aria-label="Previous month">‹</button>
+                                            <div class="calendar-month-year" id="monthYear" aria-live="polite"></div>
+                                            <button type="button" class="calendar-nav" id="nextMonth" aria-label="Next month">›</button>
                                         </div>
-                                        <div class="calendar-grid" id="calendarGrid"></div>
-                                        <div class="time-picker">
+                                        <div class="calendar-grid" id="calendarGrid" role="grid" aria-label="Calendar"></div>
+                                        <div class="time-picker" role="group" aria-label="Time picker">
                                             <input type="number" class="time-input" id="hourInput" min="0" max="23"
-                                                placeholder="00">
-                                            <span class="time-separator">:</span>
+                                                placeholder="00" aria-label="Hour (0-23)">
+                                            <span class="time-separator" aria-hidden="true">:</span>
                                             <input type="number" class="time-input" id="minuteInput" min="0" max="59"
-                                                placeholder="00">
+                                                placeholder="00" aria-label="Minute (0-59)">
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" data-i18n="btnSchedule">Planla</button>
+                            <button type="submit" data-i18n="btnSchedule" aria-label="Schedule meeting">Planla</button>
                         </form>
                     </div>
 
@@ -5445,22 +5635,25 @@
                             <div class="overlay-panel overlay-left">
                                 <h1 data-i18n="overlayLeftTitle">Birlikte Çalışalım</h1>
                                 <p data-i18n="overlayLeftText">Bir proje için bana ulaşmak ister misiniz?</p>
-                                <button class="ghost" id="contactBtn" data-i18n="contactBtn">İletişime Geç</button>
+                                <button class="ghost" id="contactBtn" data-i18n="contactBtn" aria-label="Switch to contact form">İletişime Geç</button>
                             </div>
                             <div class="overlay-panel overlay-right">
                                 <h1 data-i18n="overlayRightTitle">Hadi Konuşalım</h1>
                                 <p data-i18n="overlayRightText">Bunun yerine kısa bir görüşme mi yapmak istersiniz?</p>
-                                <button class="ghost" id="meetingBtn" data-i18n="meetingBtn">Görüşme Planla</button>
+                                <button class="ghost" id="meetingBtn" data-i18n="meetingBtn" aria-label="Switch to meeting scheduling form">Görüşme Planla</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Social Links -->
-                <div class="social-links">
-                    <a href="https://github.com/icessi1" target="_blank"><i class="fab fa-github"></i></a>
-                    <a href="https://www.linkedin.com/in/%C3%B6mer-faruk-bulut-650668152/" target="_blank"><i
-                            class="fab fa-linkedin"></i></a>
+                <div class="social-links" role="navigation" aria-label="Social media links">
+                    <a href="https://github.com/icessi1" target="_blank" rel="noopener noreferrer" aria-label="Visit my GitHub profile">
+                        <i class="fab fa-github" aria-hidden="true"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/%C3%B6mer-faruk-bulut-650668152/" target="_blank" rel="noopener noreferrer" aria-label="Connect with me on LinkedIn">
+                        <i class="fab fa-linkedin" aria-hidden="true"></i>
+                    </a>
                 </div>
             </div>
         </div>
@@ -6050,19 +6243,41 @@
         const htmlElement = document.documentElement;
         const logoImg = document.querySelector('.logo-icon img');
 
+        // Function to update favicon based on theme (High Resolution - Multiple Sizes)
+        function updateFavicon(theme) {
+            const iconPath = theme === 'light' ? 'iconbeyazb1.png' : 'iconnnns1.png';
+            const themeColor = theme === 'light' ? '#0066cc' : '#00ff88';
+            
+            // Update all favicon sizes
+            document.getElementById('favicon-32').href = iconPath;
+            document.getElementById('favicon-64').href = iconPath;
+            document.getElementById('favicon-96').href = iconPath;
+            document.getElementById('favicon-128').href = iconPath;
+            document.getElementById('favicon-apple').href = iconPath;
+            document.getElementById('favicon-tile').content = iconPath;
+            document.getElementById('theme-color-meta').content = themeColor;
+        }
+
         // Check for saved theme preference or default to dark mode
         const currentTheme = localStorage.getItem('theme') || 'dark';
         if (currentTheme === 'light') {
             htmlElement.classList.add('light-theme');
             themeToggle.checked = true;
-            if (logoImg) logoImg.src = 'iconbeyaz.png';
+            themeToggle.setAttribute('aria-checked', 'true');
+            if (logoImg) logoImg.src = 'iconbeyazb1.png';
+            updateFavicon('light');
+        } else {
+            themeToggle.setAttribute('aria-checked', 'false');
+            updateFavicon('dark');
         }
 
         themeToggle.addEventListener('change', () => {
             if (themeToggle.checked) {
                 htmlElement.classList.add('light-theme');
                 localStorage.setItem('theme', 'light');
-                if (logoImg) logoImg.src = 'iconbeyaz.png';
+                themeToggle.setAttribute('aria-checked', 'true');
+                if (logoImg) logoImg.src = 'iconbeyazb1.png';
+                updateFavicon('light'); // Update favicon to white icon
 
                 // Update SparkleNavbar color for light theme
                 const container = document.getElementById('sparkle-navbar-container');
@@ -6076,7 +6291,9 @@
             } else {
                 htmlElement.classList.remove('light-theme');
                 localStorage.setItem('theme', 'dark');
-                if (logoImg) logoImg.src = 'iconnnn.png';
+                themeToggle.setAttribute('aria-checked', 'false');
+                if (logoImg) logoImg.src = 'iconnnns1.png';
+                updateFavicon('dark'); // Update favicon to black icon
 
                 // Update SparkleNavbar color for dark theme
                 const container = document.getElementById('sparkle-navbar-container');
@@ -6103,7 +6320,7 @@
             dualFormContainer.classList.add("right-panel-active");
         });
 
-        // Contact form submission
+        // Contact form submission with EmailJS
         document.getElementById('contactForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
@@ -6111,6 +6328,47 @@
             const name = document.getElementById('contactName').value;
             const email = document.getElementById('contactEmail').value;
             const message = document.getElementById('contactMessage').value;
+            
+            // Get submit button and add loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Gönderiliyor...';
+            submitBtn.style.opacity = '0.6';
+
+            // Prepare form data with Turkey timezone
+            const now = new Date();
+            const turkeyOffset = 3 * 60; // Turkey is UTC+3
+            const turkeyTime = new Date(now.getTime() + (turkeyOffset * 60 * 1000));
+            
+            const formData = {
+                from_name: name,
+                from_email: email,
+                message: message,
+                to_name: 'Ömer Faruk',
+                timestamp: turkeyTime.toISOString(),
+                form_type: 'contact'
+            };
+
+            // Send to Zapier/Make webhook for SMS/WhatsApp (parallel to EmailJS)
+            if (CONTACT_WEBHOOK_URL && CONTACT_WEBHOOK_URL !== "BURAYA_ZAPIER_URL_YAPISTIR") {
+                fetch(CONTACT_WEBHOOK_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(formData)
+                }).then(res => {
+                    console.log('✅ Webhook sent successfully to Zapier!');
+                }).catch(err => {
+                    console.log('❌ Webhook error:', err);
+                });
+            }
+
+            // Send email using EmailJS
+            emailjs.send(
+                'service_rk5ooa4',    // EmailJS Service ID
+                'template_vwq8ged',   // İletişim Formu Template ID
+                formData
+            ).then(function(response) {
+                console.log('Email sent successfully!', response.status, response.text);
 
             // Show success message
             const successMessage = document.createElement('div');
@@ -6128,7 +6386,7 @@
                 box-shadow: 0 20px 60px rgba(0, 255, 136, 0.4);
                 animation: fadeInUp 0.5s ease;
             `;
-            successMessage.textContent = `Thank you ${name}! Your message has been received.`;
+                successMessage.textContent = `Teşekkürler ${name}! Mesajınız başarıyla gönderildi. 🎉`;
             document.body.appendChild(successMessage);
 
             // Remove message after 3 seconds
@@ -6139,11 +6397,49 @@
                 }, 500);
             }, 3000);
 
-            // Reset form
-            this.reset();
+                // Reset form and button
+                document.getElementById('contactForm').reset();
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+                submitBtn.style.opacity = '1';
+                
+            }, function(error) {
+                console.log('FAILED...', error);
+                
+                // Show error message
+                const errorMessage = document.createElement('div');
+                errorMessage.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: linear-gradient(135deg, #ff4444, #cc0000);
+                    color: white;
+                    padding: 2rem 3rem;
+                    border-radius: 20px;
+                    font-weight: 600;
+                    z-index: 10000;
+                    box-shadow: 0 20px 60px rgba(255, 68, 68, 0.4);
+                    animation: fadeInUp 0.5s ease;
+                `;
+                errorMessage.textContent = `Bir hata oluştu. Lütfen tekrar deneyin veya direkt e-posta gönderin. ⚠️`;
+                document.body.appendChild(errorMessage);
+
+                setTimeout(() => {
+                    errorMessage.style.animation = 'fadeInUp 0.5s ease reverse';
+                    setTimeout(() => {
+                        document.body.removeChild(errorMessage);
+                    }, 500);
+                }, 4000);
+
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+                submitBtn.style.opacity = '1';
+            });
         });
 
-        // Meeting form submission
+        // Meeting form submission with EmailJS
         document.getElementById('meetingForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
@@ -6155,7 +6451,27 @@
 
             // Validate that a date is selected
             if (!dateTime) {
-                alert('Lütfen bir tarih ve saat seçin.');
+                const alertMessage = document.createElement('div');
+                alertMessage.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: linear-gradient(135deg, #ff9500, #ff6b00);
+                    color: white;
+                    padding: 1.5rem 2.5rem;
+                    border-radius: 15px;
+                    font-weight: 600;
+                    z-index: 10000;
+                    box-shadow: 0 20px 60px rgba(255, 149, 0, 0.4);
+                    animation: fadeInUp 0.5s ease;
+                `;
+                alertMessage.textContent = 'Lütfen bir tarih ve saat seçin. ⏰';
+                document.body.appendChild(alertMessage);
+                setTimeout(() => {
+                    alertMessage.style.animation = 'fadeInUp 0.5s ease reverse';
+                    setTimeout(() => document.body.removeChild(alertMessage), 500);
+                }, 2500);
                 return;
             }
 
@@ -6169,6 +6485,55 @@
                 hour: '2-digit',
                 minute: '2-digit'
             });
+            
+            // Get submit button and add loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Gönderiliyor...';
+            submitBtn.style.opacity = '0.6';
+
+            // Prepare meeting data with Turkey timezone
+            const nowMeeting = new Date();
+            const turkeyOffsetMeeting = 3 * 60; // Turkey is UTC+3
+            const turkeyTimeMeeting = new Date(nowMeeting.getTime() + (turkeyOffsetMeeting * 60 * 1000));
+            
+            // Parse selected datetime (already in Turkey timezone)
+            const selectedDateTime = new Date(dateTime);
+            
+            // Calculate end time (+1 hour)
+            const endDateTime = new Date(selectedDateTime.getTime() + (60 * 60 * 1000)); // +1 hour
+            
+            const meetingData = {
+                from_name: name,
+                from_email: email,
+                meeting_datetime: formattedDate,
+                meeting_datetime_raw: selectedDateTime.toISOString(),
+                meeting_end_time: endDateTime.toISOString(),
+                to_name: 'Ömer Faruk',
+                timestamp: turkeyTimeMeeting.toISOString(),
+                form_type: 'meeting'
+            };
+
+            // Send to Zapier/Make webhook for SMS/WhatsApp (parallel to EmailJS)
+            if (MEETING_WEBHOOK_URL && MEETING_WEBHOOK_URL !== "BURAYA_ZAPIER_URL_YAPISTIR") {
+                fetch(MEETING_WEBHOOK_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(meetingData)
+                }).then(res => {
+                    console.log('✅ Meeting webhook sent successfully to Zapier!');
+                }).catch(err => {
+                    console.log('❌ Meeting webhook error:', err);
+                });
+            }
+
+            // Send meeting request using EmailJS
+            emailjs.send(
+                'service_rk5ooa4',    // EmailJS Service ID
+                'template_nsndjh9',   // Görüşme Talebi Template ID
+                meetingData
+            ).then(function(response) {
+                console.log('Meeting email sent successfully!', response.status, response.text);
 
             // Show success message
             const successMessage = document.createElement('div');
@@ -6185,10 +6550,13 @@
                 z-index: 10000;
                 box-shadow: 0 20px 60px rgba(0, 255, 136, 0.4);
                 animation: fadeInUp 0.5s ease;
+                white-space: pre-line;
+                text-align: center;
+                max-width: 90%;
             `;
             successMessage.textContent = currentLang === 'tr'
-                ? `Teşekkürler ${name}! Görüşmeniz ${formattedDate} tarihinde planlandı.`
-                : `Thank you ${name}! Your meeting is scheduled for ${formattedDate}.`;
+                    ? `Teşekkürler ${name}! Görüşme talebiniz ${formattedDate} için alındı. 📅\n\nLütfen e-posta adresinizi kontrol etmeyi unutmayın. Toplantı linki orada! 📧`
+                    : `Thank you ${name}! Your meeting request for ${formattedDate} has been received. 📅\n\nPlease check your email for the meeting link! 📧`;
             document.body.appendChild(successMessage);
 
             // Remove message after 3 seconds
@@ -6199,8 +6567,48 @@
                 }, 500);
             }, 3000);
 
-            // Reset form
-            this.reset();
+                // Reset form and button
+                document.getElementById('meetingForm').reset();
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+                submitBtn.style.opacity = '1';
+                
+            }, function(error) {
+                console.log('MEETING FAILED...', error);
+                
+                // Show error message
+                const errorMessage = document.createElement('div');
+                errorMessage.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: linear-gradient(135deg, #ff4444, #cc0000);
+                    color: white;
+                    padding: 2rem 3rem;
+                    border-radius: 20px;
+                    font-weight: 600;
+                    z-index: 10000;
+                    box-shadow: 0 20px 60px rgba(255, 68, 68, 0.4);
+                    animation: fadeInUp 0.5s ease;
+                `;
+                errorMessage.textContent = currentLang === 'tr'
+                    ? 'Bir hata oluştu. Lütfen tekrar deneyin veya direkt e-posta gönderin. ⚠️'
+                    : 'An error occurred. Please try again or send an email directly. ⚠️';
+                document.body.appendChild(errorMessage);
+
+                setTimeout(() => {
+                    errorMessage.style.animation = 'fadeInUp 0.5s ease reverse';
+                    setTimeout(() => {
+                        document.body.removeChild(errorMessage);
+                    }, 500);
+                }, 4000);
+
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+                submitBtn.style.opacity = '1';
+            });
         });
 
         // Intersection Observer for fade-in animations
@@ -8004,10 +8412,10 @@ Kod yazmadığım zamanlarda beni yeni teknolojiler keşfederken bulabilirsiniz,
                     } else {
                         // Check if any item is still expanded after animation
                         setTimeout(() => {
-                            const hasAnyExpanded = document.querySelectorAll('.menu__item.expanded').length > 0;
-                            if (!hasAnyExpanded) {
-                                menuWrap.classList.remove('has-expanded');
-                            }
+                        const hasAnyExpanded = document.querySelectorAll('.menu__item.expanded').length > 0;
+                        if (!hasAnyExpanded) {
+                            menuWrap.classList.remove('has-expanded');
+                        }
                         }, 400);
                     }
                 });
@@ -8034,10 +8442,10 @@ Kod yazmadığım zamanlarda beni yeni teknolojiler keşfederken bulabilirsiniz,
                     // Check if any item is still expanded
                     const menuWrap = document.querySelector('.menu-wrap');
                     setTimeout(() => {
-                        const hasAnyExpanded = document.querySelectorAll('.menu__item.expanded').length > 0;
-                        if (!hasAnyExpanded) {
-                            menuWrap.classList.remove('has-expanded');
-                        }
+                    const hasAnyExpanded = document.querySelectorAll('.menu__item.expanded').length > 0;
+                    if (!hasAnyExpanded) {
+                        menuWrap.classList.remove('has-expanded');
+                    }
                     }, 400);
                 });
 
@@ -8058,32 +8466,32 @@ Kod yazmadığım zamanlarda beni yeni teknolojiler keşfederken bulabilirsiniz,
 
                 // Desktop hover animations
                 if (window.innerWidth > 768) {
-                    link.addEventListener('mouseenter', (ev) => {
+                link.addEventListener('mouseenter', (ev) => {
                         if (menuItem.classList.contains('expanded')) return;
                         
-                        const rect = menuItem.getBoundingClientRect();
-                        const x = ev.clientX - rect.left;
-                        const y = ev.clientY - rect.top;
-                        const edge = findClosestEdge(x, y, rect.width, rect.height);
+                    const rect = menuItem.getBoundingClientRect();
+                    const x = ev.clientX - rect.left;
+                    const y = ev.clientY - rect.top;
+                    const edge = findClosestEdge(x, y, rect.width, rect.height);
 
-                        gsap.timeline({ defaults: animationDefaults })
-                            .set(marquee, { y: edge === 'top' ? '-101%' : '101%' }, 0)
-                            .set(marqueeInnerWrap, { y: edge === 'top' ? '101%' : '-101%' }, 0)
-                            .to([marquee, marqueeInnerWrap], { y: '0%' }, 0);
-                    });
+                    gsap.timeline({ defaults: animationDefaults })
+                        .set(marquee, { y: edge === 'top' ? '-101%' : '101%' }, 0)
+                        .set(marqueeInnerWrap, { y: edge === 'top' ? '101%' : '-101%' }, 0)
+                        .to([marquee, marqueeInnerWrap], { y: '0%' }, 0);
+                });
 
-                    link.addEventListener('mouseleave', (ev) => {
+                link.addEventListener('mouseleave', (ev) => {
                         if (menuItem.classList.contains('expanded')) return;
                         
-                        const rect = menuItem.getBoundingClientRect();
-                        const x = ev.clientX - rect.left;
-                        const y = ev.clientY - rect.top;
-                        const edge = findClosestEdge(x, y, rect.width, rect.height);
+                    const rect = menuItem.getBoundingClientRect();
+                    const x = ev.clientX - rect.left;
+                    const y = ev.clientY - rect.top;
+                    const edge = findClosestEdge(x, y, rect.width, rect.height);
 
-                        gsap.timeline({ defaults: animationDefaults })
-                            .to(marquee, { y: edge === 'top' ? '-101%' : '101%' }, 0)
-                            .to(marqueeInnerWrap, { y: edge === 'top' ? '101%' : '-101%' }, 0);
-                    });
+                    gsap.timeline({ defaults: animationDefaults })
+                        .to(marquee, { y: edge === 'top' ? '-101%' : '101%' }, 0)
+                        .to(marqueeInnerWrap, { y: edge === 'top' ? '101%' : '-101%' }, 0);
+                });
                 } else {
                     // Mobile touch animations
                     let touchTimer;
